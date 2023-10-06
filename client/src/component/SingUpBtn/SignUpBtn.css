@@ -1,0 +1,29 @@
+.sign-up {
+  background-color: var(--pink);
+  color: var(--light);
+  margin-left: 15px;
+}
+
+/* .sign-up {
+  background-size: 300% 100%;
+  moz-transition: all 0.4s ease-in-out;
+  -o-transition: all 0.4s ease-in-out;
+  -webkit-transition: all 0.4s ease-in-out;
+  transition: all 0.4s ease-in-out;
+} */
+
+.sign-up {
+  background-image: linear-gradient(
+    to right,
+    #eb3941,
+    #f15e64,
+    #e14e53,
+    #e2373f
+  );
+  box-shadow: 0 5px 15px rgba(242, 97, 103, 0.4);
+}
+
+.secondary {
+  font-size: 1.5rem;
+  width: 50%;
+}

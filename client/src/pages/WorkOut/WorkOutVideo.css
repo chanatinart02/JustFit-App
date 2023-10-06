@@ -1,0 +1,44 @@
+.image-workout img {
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
+}
+
+.image-workout img:hover {
+  opacity: 0.5;
+  transition: opacity 0.4s ease-in-out, transform 0.4s ease-in-out;
+}
+
+.image-workout:hover {
+  background-color: black;
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
+}
+
+.title {
+  margin: 32px 0;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.item {
+  background-color: #6f36bc;
+  border-radius: 15px;
+  margin-right: 24px;
+}
+
+.sub-title-video {
+  padding: 16px 0;
+  display: flex;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 1.25rem;
+  color: white;
+  text-align: center;
+}
+
+.owl-nav {
+  display: flex;
+  justify-content: space-between;
+  font-size: 2.25rem;
+  align-items: center;
+}

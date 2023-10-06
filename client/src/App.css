@@ -1,0 +1,51 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+p.lead {
+  font-size: 1.5rem;
+  font-weight: 400;
+}
+
+.container {
+  max-width: 1140px;
+  margin: 0 auto;
+}
+
+.bgw {
+  background-color: var(--light);
+}
+
+div.hero * {
+  color: var(--light);
+}
+
+.review-info {
+  display: flex;
+  justify-content: center;
+}
+
+.review-info img {
+  height: 135px;
+  width: 125px;
+  border-radius: 67.5px;
+  object-fit: cover;
+}
+
+.review h1 {
+  color: var(--light);
+}
+
+.review-info h3 {
+  display: flex;
+  align-items: center;
+  margin-left: 20px;
+  font-weight: bold;
+  color: var(--light);
+}
+
+.bgp {
+  background-color: var(--darkPurple);
+}

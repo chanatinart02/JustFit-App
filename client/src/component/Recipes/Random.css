@@ -1,0 +1,36 @@
+.title {
+  margin: 20px 0;
+}
+
+.card {
+  min-height: 20rem;
+  border-radius: 2rem;
+  overflow: hidden;
+  position: relative;
+  background-color: var(--main);
+}
+
+.card img {
+  border-radius: 2rem 2rem 0 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.card a {
+  text-decoration: none;
+}
+
+.card h5 {
+  text-align: center;
+  padding: 1rem;
+  color: aliceblue;
+}
+
+.card link {
+  text-decoration: none;
+}
+
+.wrapper {
+  margin: 0 5%;
+}

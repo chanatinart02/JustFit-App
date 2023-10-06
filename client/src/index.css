@@ -1,0 +1,17 @@
+:root {
+  --main: #6f36bc;
+  --pink: #ff4878;
+  --darkPurple: #35174d;
+  --light: #f3effe;
+}
+
+body {
+  font-family: "Roboto", sans-serif !important;
+  font-size: 16px;
+  position: relative;
+  min-height: 100vh;
+}
+
+.home {
+  background-color: var(--main);
+}
