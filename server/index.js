@@ -3,6 +3,7 @@ import * as dotenv from "dotenv";
 import cors from "cors";
 
 import connectDB from "./config/dbConnect.js";
+import userRoutes from "./routes/user.routes.js";
 
 dotenv.config();
 
@@ -16,6 +17,9 @@ app.use(express.urlencoded({ extended: false }));
 app.get("/", (req, res) => {
   res.send({ message: "hello world!" });
 });
+
+// Routes
+app.use("/api/users", userRoutes);
 
 app.listen(PORT, () => {
   connectDB();
