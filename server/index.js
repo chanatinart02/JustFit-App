@@ -2,6 +2,8 @@ import express from "express";
 import * as dotenv from "dotenv";
 import cors from "cors";
 
+import connectDB from "./config/dbConnect.js";
+
 dotenv.config();
 
 const app = express();
@@ -16,5 +18,6 @@ app.get("/", (req, res) => {
 });
 
 app.listen(PORT, () => {
+  connectDB();
   console.log(`Server running on port: http://localhost:${PORT}`);
 });
