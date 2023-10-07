@@ -2,12 +2,12 @@ import React, { useState } from "react";
 import Layout from "../../component/Layout";
 import Helmet from "react-helmet";
 import {
-  getAuth,
   signInWithPopup,
   GoogleAuthProvider,
   createUserWithEmailAndPassword,
 } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 import { auth } from "../../services/firebase";
 
@@ -19,7 +19,7 @@ function SignUpPage() {
   const navigate = useNavigate();
   const provider = new GoogleAuthProvider();
 
-  const onSubmit = async (e) => {
+  const handleSignUp = async (e) => {
     e.preventDefault();
 
     if (!email || !password) {
@@ -27,44 +27,61 @@ function SignUpPage() {
       return;
     }
 
-    await createUserWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        const user = userCredential.user;
-        console.log(user);
-        setError("");
-        navigate("/login");
-      })
-      .catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        console.log(errorCode, errorMessage);
-        setError(errorMessage);
-      });
+    try {
+      await createUserWithEmailAndPassword(auth, email, password).then(
+        (userCredential) => {
+          const user = userCredential.user;
+          console.log(user);
+
+          const userData = {
+            name: user.displayName,
+            email: user.email,
+            uid: user.uid,
+            avatar: user.photoURL,
+          };
+
+          postUserData(userData);
+          setError("");
+          navigate("/login");
+        }
+      );
+    } catch (error) {
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      console.log(errorCode, errorMessage);
+      setError(errorMessage);
+    }
   };
 
-  const loginWithGoogle = () => {
-    signInWithPopup(auth, provider)
-      .then((result) => {
-        // This gives you a Google Access Token. You can use it to access the Google API.
-        const credential = GoogleAuthProvider.credentialFromResult(result);
-        const token = credential.accessToken;
-        // The signed-in user info.
-        const user = result.user;
-        console.log(user);
-        console.log(token);
+  const handleGoogleAuth = async () => {
+    try {
+      const result = await signInWithPopup(auth, provider);
+      const credential = await GoogleAuthProvider.credentialFromResult(result);
+      const token = credential.accessToken;
+      const user = result.user;
 
-        navigate("/");
-      })
-      .catch((error) => {
-        // Handle Errors here.
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        // The email of the user's account used.
-        const email = error.customData.email;
-        // The AuthCredential type that was used.
-        const credential = GoogleAuthProvider.credentialFromError(error);
-      });
+      const userData = {
+        name: user.displayName,
+        email: user.email,
+        uid: user.uid,
+        avatar: user.photoURL,
+      };
+
+      await postUserData(userData);
+      navigate("/");
+    } catch (error) {
+      console.error("Error logging in with Google:", error);
+    }
   };
+
+  const postUserData = async (userData) => {
+    try {
+      await axios.post(`${import.meta.env.VITE_APP_API_URL}users`, userData);
+    } catch (error) {
+      console.error("Error posting user data:", error);
+    }
+  };
+
   return (
     <Layout>
       <Helmet>
@@ -121,7 +138,7 @@ function SignUpPage() {
           <button
             className="w-100 btn btn-lg login-btn mb-4"
             type="submit"
-            onClick={onSubmit}
+            onClick={handleSignUp}
           >
             Sign up
           </button>
@@ -129,7 +146,7 @@ function SignUpPage() {
           <button
             type="button"
             className="login-with-google-btn m-auto"
-            onClick={loginWithGoogle}
+            onClick={handleGoogleAuth}
           >
             Continue with Google
           </button>

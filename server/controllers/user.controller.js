@@ -10,7 +10,7 @@ cloudinary.config({
 });
 
 const createUser = asyncHandler(async (req, res) => {
-  const { name, email, avatar } = req.body;
+  const { name, email, avatar, uid } = req.body;
 
   const userExists = await User.findOne({ email });
   if (userExists) {
@@ -21,6 +21,7 @@ const createUser = asyncHandler(async (req, res) => {
     name,
     email,
     avatar,
+    uid,
   });
 
   res.status(201).json(newUser); // 201 for resource created
