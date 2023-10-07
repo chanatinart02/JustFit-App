@@ -1,8 +1,70 @@
-import React from "react";
+import React, { useState } from "react";
 import Layout from "../../component/Layout";
 import Helmet from "react-helmet";
+import {
+  getAuth,
+  signInWithPopup,
+  GoogleAuthProvider,
+  createUserWithEmailAndPassword,
+} from "firebase/auth";
+import { useNavigate } from "react-router-dom";
+
+import { auth } from "../../services/firebase";
 
 function SignUpPage() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+
+  const navigate = useNavigate();
+  const provider = new GoogleAuthProvider();
+
+  const onSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!email || !password) {
+      setError("Please enter both email and password.");
+      return;
+    }
+
+    await createUserWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        const user = userCredential.user;
+        console.log(user);
+        setError("");
+        navigate("/login");
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        console.log(errorCode, errorMessage);
+        setError(errorMessage);
+      });
+  };
+
+  const loginWithGoogle = () => {
+    signInWithPopup(auth, provider)
+      .then((result) => {
+        // This gives you a Google Access Token. You can use it to access the Google API.
+        const credential = GoogleAuthProvider.credentialFromResult(result);
+        const token = credential.accessToken;
+        // The signed-in user info.
+        const user = result.user;
+        console.log(user);
+        console.log(token);
+
+        navigate("/");
+      })
+      .catch((error) => {
+        // Handle Errors here.
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        // The email of the user's account used.
+        const email = error.customData.email;
+        // The AuthCredential type that was used.
+        const credential = GoogleAuthProvider.credentialFromError(error);
+      });
+  };
   return (
     <Layout>
       <Helmet>
@@ -18,7 +80,7 @@ function SignUpPage() {
       </Helmet>
       <main className="form_container m-auto mt-4 ">
         <h1 className="h1 mb-3 text-center log-in">
-          Join JustFit today,
+          Join Just<span>Fit</span> today,
           <br />
           It’s free
         </h1>
@@ -31,8 +93,9 @@ function SignUpPage() {
               className="form-control"
               id="floatingInput"
               placeholder="name@example.com"
+              onChange={(e) => setEmail(e.target.value)}
             />
-            <label for="floatingInput">Email address</label>
+            <label htmlFor="floatingInput">Email address</label>
           </div>
           <div className="form-floating mb-4 w-100">
             <input
@@ -40,8 +103,9 @@ function SignUpPage() {
               className="form-control"
               id="floatingPassword"
               placeholder="Password"
+              onChange={(e) => setPassword(e.target.value)}
             />
-            <label for="floatingPassword">Password</label>
+            <label htmlFor="floatingPassword">Password</label>
           </div>
 
           <div className="checkbox mb-3">
@@ -51,11 +115,22 @@ function SignUpPage() {
             <a href="#">Forgot password?</a>
           </div>
 
-          <button className="w-100 btn btn-lg login-btn mb-4" type="submit">
+          {/* Display error */}
+          {error && <div className="alert alert-danger">{error}</div>}
+
+          <button
+            className="w-100 btn btn-lg login-btn mb-4"
+            type="submit"
+            onClick={onSubmit}
+          >
             Sign up
           </button>
           {/* google */}
-          <button type="button" className="login-with-google-btn m-auto ">
+          <button
+            type="button"
+            className="login-with-google-btn m-auto"
+            onClick={loginWithGoogle}
+          >
             Continue with Google
           </button>
         </form>

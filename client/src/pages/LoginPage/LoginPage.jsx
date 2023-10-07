@@ -52,12 +52,12 @@ function LoginPage() {
             Log in
           </button>
           {/* google */}
-          <button type="button" class="login-with-google-btn m-auto ">
+          <button type="button" className="login-with-google-btn m-auto ">
             Continue with Google
           </button>
         </form>
         <p className="text-center mt-4">
-          Don’t have an account? <a href="/signup">Sign up</a>
+          Don’t have an account? <a href="/register">Sign up</a>
         </p>
       </main>
     </Layout>

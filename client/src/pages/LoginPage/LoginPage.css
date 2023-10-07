@@ -26,6 +26,10 @@ form {
   width: 100%;
 }
 
+.log-in span {
+  color: var(--pink);
+}
+
 .login-btn {
   background-color: var(--pink);
   color: var(--light);
