@@ -25,23 +25,25 @@ function LoginPage() {
     e.preventDefault();
 
     try {
-      await signInWithEmailAndPassword(auth, email, password).then(
-        (userCredential) => {
-          const user = userCredential.user;
-          console.log(user);
-
-          const userData = {
-            name: user.displayName,
-            email: user.email,
-            uid: user.uid,
-            avatar: user.photoURL,
-          };
-
-          postUserData(userData);
-          setError("");
-          navigate("/dashboard");
-        }
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
       );
+      const user = userCredential.user;
+      // console.log(user);
+
+      const userData = {
+        name: user.displayName,
+        email: user.email,
+        uid: user.uid,
+        avatar: user.photoURL,
+      };
+
+      await postUserData(userData);
+
+      setError("");
+      navigate("/dashboard");
     } catch (error) {
       const errorCode = error.code;
       const errorMessage = error.message;
@@ -73,7 +75,12 @@ function LoginPage() {
 
   const postUserData = async (userData) => {
     try {
-      await axios.post(`${import.meta.env.VITE_APP_API_URL}users`, userData);
+      const res = await axios.post(
+        `${import.meta.env.VITE_APP_API_URL}users`,
+        userData
+      );
+
+      localStorage.setItem("currentUser", JSON.stringify(res.data));
     } catch (error) {
       console.error("Error posting user data:", error);
     }
