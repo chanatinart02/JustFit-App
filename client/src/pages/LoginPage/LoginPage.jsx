@@ -21,6 +21,7 @@ function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
+  // Function to handle login with email and password
   const handleLogin = async (e) => {
     e.preventDefault();
 
@@ -30,9 +31,11 @@ function LoginPage() {
         email,
         password
       );
+      // Get the user information
       const user = userCredential.user;
       // console.log(user);
 
+      // Prepare user data for DB
       const userData = {
         name: user.displayName,
         email: user.email,
@@ -40,6 +43,7 @@ function LoginPage() {
         avatar: user.photoURL,
       };
 
+      // Send user data to the server
       await postUserData(userData);
 
       setError("");
@@ -73,6 +77,7 @@ function LoginPage() {
     }
   };
 
+  // Function to post user data to the server
   const postUserData = async (userData) => {
     try {
       const res = await axios.post(
@@ -80,6 +85,7 @@ function LoginPage() {
         userData
       );
 
+      // Store current user data in local storage
       localStorage.setItem("currentUser", JSON.stringify(res.data));
     } catch (error) {
       console.error("Error posting user data:", error);
