@@ -42,7 +42,9 @@ const updatesUser = asyncHandler(async (req, res) => {
   const { id } = req.params;
   const updates = req.body;
 
-  const updateUser = await User.findByIdAndUpdate(id, updates, { new: true });
+  const updateUser = await User.findOneAndUpdate({ _id: id }, updates, {
+    new: true,
+  });
 
   if (!updateUser) {
     return res.status(404).json({ message: "User not found" });
@@ -50,7 +52,7 @@ const updatesUser = asyncHandler(async (req, res) => {
 
   res.status(200).json(updateUser);
 
-  res.status(500).json({ message: "Internal server error" });
+  // res.status(500).json({ message: "Internal server error" });
 });
 
 export { createUser, getUserInfoByID, updatesUser };
