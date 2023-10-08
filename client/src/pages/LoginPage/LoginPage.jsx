@@ -109,7 +109,7 @@ function LoginPage() {
         <h1 className="h1 mb-3 text-center log-in">Log in</h1>
         <h1 className="h3 mb-3 fw-bold text-center">Welcome back</h1>
 
-        <form className="mx-4">
+        <form className="mx-4 form">
           <div className="form-floating mb-4 w-100">
             <input
               type="email"

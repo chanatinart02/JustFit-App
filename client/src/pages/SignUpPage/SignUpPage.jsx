@@ -103,7 +103,7 @@ function SignUpPage() {
         </h1>
         <h1 className="h3 mb-3 fw-bold text-center">Welcome to JustFit!</h1>
 
-        <form className="mx-4">
+        <form className="mx-4 form">
           <div className="form-floating mb-4 w-100">
             <input
               type="email"

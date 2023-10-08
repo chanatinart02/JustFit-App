@@ -9,7 +9,7 @@
   margin-top: 50px;
 }
 
-form {
+.form {
   display: flex;
   justify-content: center;
   align-items: center;

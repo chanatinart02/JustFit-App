@@ -44,6 +44,7 @@ const Header = () => {
                     height="56px"
                     src={currentUser.avatar || user2}
                     roundedCircle
+                    fluid
                   />
                   <NavDropdown
                     title={currentUser.name || "Anonymous"}
