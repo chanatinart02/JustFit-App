@@ -1,13 +1,38 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Container, Image, Button } from "react-bootstrap";
+import axios from "axios";
 
 import Layout from "../../component/Layout";
-
 import "./ProfilePage.css";
 import EditProfile from "../../component/EditProfile/EditProfile";
+import { user2 } from "../../assets";
 
 const ProfilePage = () => {
   const [modalShow, setModalShow] = useState(false);
+  const currentUser = JSON.parse(localStorage.getItem("currentUser")); //get user
+  const [userData, setUserData] = useState({
+    name: "",
+    age: 0,
+    gender: "",
+    height: 0,
+    weight: 0,
+  }); // Initialize userData state
+
+  useEffect(() => {
+    if (currentUser) {
+      (async () => {
+        try {
+          const res = await axios.get(
+            `${import.meta.env.VITE_APP_API_URL}users/${currentUser._id}`
+          );
+          setUserData(res.data);
+          // console.log(res.data);
+        } catch (error) {
+          console.error("Error fetching user data:", error);
+        }
+      })();
+    }
+  }, [currentUser]);
 
   const handleEditModal = () => {
     setModalShow(true);
@@ -22,7 +47,7 @@ const ProfilePage = () => {
         <section className="d-flex flex-column align-items-center">
           <h4>Current Photo</h4>
           <Image
-            src="https://img.freepik.com/premium-vector/man-is-showing-gesture-okay-ok-cartoon-style_165429-877.jpg?w=2000"
+            src={userData?.avatar || user2}
             roundedCircle
             fluid
             width="180px"
@@ -31,23 +56,23 @@ const ProfilePage = () => {
           <div className="user-info mt-4">
             <div class="col-sm-3 d-flex gap-3">
               <p class="info">Name</p>
-              <p class="fw-semibold">Fullname</p>
+              <p class="fw-semibold">{userData?.name || "Anonymous"}</p>
             </div>
             <div class="col-sm-3 d-flex gap-3">
               <p class="info">Gender</p>
-              <p class="fw-semibold">Woman</p>
+              <p class="fw-semibold">{userData?.gender || "N/A"}</p>
             </div>
             <div class="col-sm-3 d-flex gap-3">
               <p class="info">Age</p>
-              <p class="fw-semibold">23</p>
+              <p class="fw-semibold">{userData?.age || "N/A"}</p>
             </div>
             <div class="col-sm-3 d-flex gap-3">
               <p class="info">Height</p>
-              <p class="fw-semibold">167</p>
+              <p class="fw-semibold">{userData?.height || "N/A"}</p>
             </div>
             <div class="col-sm-3 d-flex gap-3">
               <p class="info">Weight</p>
-              <p class="fw-semibold">47</p>
+              <p class="fw-semibold">{userData?.weight || "N/A"}</p>
             </div>
           </div>
           <Button

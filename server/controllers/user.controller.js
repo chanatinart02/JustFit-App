@@ -40,11 +40,15 @@ const getUserInfoByID = asyncHandler(async (req, res) => {
 
 const updatesUser = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  const updates = req.body;
+  const { name, gender, age, height, weight } = req.body;
 
-  const updateUser = await User.findOneAndUpdate({ _id: id }, updates, {
-    new: true,
-  });
+  const updateUser = await User.findOneAndUpdate(
+    { _id: id },
+    { name, gender, age, height, weight },
+    {
+      new: true,
+    }
+  );
 
   if (!updateUser) {
     return res.status(404).json({ message: "User not found" });
