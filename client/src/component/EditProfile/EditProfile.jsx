@@ -18,16 +18,18 @@ const EditProfile = ({ closeModal, modalShow }) => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
 
     if (name === "dateOfBirth") {
       const age = calculateAge(value);
       setFormData({
         ...formData,
         age: age,
+        [name]: value,
+      });
+    } else {
+      setFormData({
+        ...formData,
+        [name]: value,
       });
     }
   };

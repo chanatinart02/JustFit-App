@@ -19,19 +19,18 @@ const ProfilePage = () => {
   }); // Initialize userData state
 
   useEffect(() => {
-    if (currentUser) {
-      (async () => {
-        try {
-          const res = await axios.get(
-            `${import.meta.env.VITE_APP_API_URL}users/${currentUser._id}`
-          );
-          setUserData(res.data);
-          // console.log(res.data);
-        } catch (error) {
-          console.error("Error fetching user data:", error);
-        }
-      })();
-    }
+    const fetchUser = async () => {
+      try {
+        const res = await axios.get(
+          `${import.meta.env.VITE_APP_API_URL}users/${currentUser._id}`
+        );
+        setUserData(res.data);
+        // console.log(res.data);
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    };
+    fetchUser();
   }, [currentUser]);
 
   const handleEditModal = () => {
