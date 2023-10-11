@@ -5,5 +5,7 @@ import cover2 from "./img/cover2.jpg";
 import cover3 from "./img/cover3.jpg";
 import user from "./img/user.jpg";
 import user2 from "./img/user.png";
+import burn from "./img/burn.png";
+import award from "./img/award.png";
 
-export { content1, content2, cover1, cover2, cover3, user, user2 };
+export { content1, content2, cover1, cover2, cover3, user, user2, burn, award };

@@ -45,7 +45,7 @@ function Random() {
           random.map((recipe) => {
             return (
               <SplideSlide key={recipe.id}>
-                <div className="card">
+                <div className="card random">
                   <Link to={"/recipes/" + recipe.id}>
                     <img src={recipe.image} alt={recipe.title} />
                     <h5>{recipe.title}</h5>

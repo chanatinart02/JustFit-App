@@ -3,11 +3,14 @@
 }
 
 .card {
-  min-height: 20rem;
   border-radius: 2rem;
   overflow: hidden;
   position: relative;
   background-color: var(--main);
+}
+
+.random {
+  min-height: 20rem;
 }
 
 .card img {
