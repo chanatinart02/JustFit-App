@@ -25,7 +25,7 @@ const ProfilePage = () => {
           `${import.meta.env.VITE_APP_API_URL}users/${currentUser._id}`
         );
         setUserData(res.data);
-        // console.log(res.data);
+        localStorage.setItem("currentUser", JSON.stringify(res.data)); // update user in LocalStorage
       } catch (error) {
         console.error("Error fetching user data:", error);
       }
@@ -82,7 +82,11 @@ const ProfilePage = () => {
             Edit profile
           </Button>
         </section>
-        <EditProfile modalShow={modalShow} closeModal={closeModal} />
+        <EditProfile
+          modalShow={modalShow}
+          closeModal={closeModal}
+          userData={userData}
+        />
       </Container>
     </Layout>
   );

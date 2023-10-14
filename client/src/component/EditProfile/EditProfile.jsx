@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import { Modal, Button, Container, Form, Row, Col } from "react-bootstrap";
+import { Modal, Button, Form } from "react-bootstrap";
 import axios from "axios";
 
 import genderTypes from "../../constants/genderType";
 
-const EditProfile = ({ closeModal, modalShow }) => {
+const EditProfile = ({ closeModal, modalShow, userData }) => {
   // const [avatar, setAvatar] = useState({ name: "", url: "" });
   const [formData, setFormData] = useState({
     name: "",
@@ -32,6 +32,7 @@ const EditProfile = ({ closeModal, modalShow }) => {
         [name]: value,
       });
     }
+    console.log(formData);
   };
 
   const calculateAge = (dateOfBirth) => {
@@ -58,7 +59,6 @@ const EditProfile = ({ closeModal, modalShow }) => {
         `${import.meta.env.VITE_APP_API_URL}users/${currentUser._id}`,
         formData
       );
-      console.log(res.data);
       closeModal();
     } catch (error) {
       console.error("Error updating user data:", error);
@@ -85,7 +85,7 @@ const EditProfile = ({ closeModal, modalShow }) => {
               type="text"
               name="name"
               onChange={handleChange}
-              value={formData.name}
+              value={formData.name || userData.name}
             />
           </Form.Group>
 
@@ -127,7 +127,7 @@ const EditProfile = ({ closeModal, modalShow }) => {
             name="height"
             placeholder="167 cm"
             onChange={handleChange}
-            value={formData.height}
+            value={formData.height || userData.height}
           />
 
           <Form.Label>Weight</Form.Label>
@@ -136,7 +136,7 @@ const EditProfile = ({ closeModal, modalShow }) => {
             name="weight"
             placeholder="47 kg"
             onChange={handleChange}
-            value={formData.weight}
+            value={formData.weight || userData.weight}
           />
 
           {/* <Form.Group controlId="formFile" className="mb-3">
