@@ -5,6 +5,7 @@ import multer from "multer";
 
 import connectDB from "./config/dbConnect.js";
 import userRoutes from "./routes/user.routes.js";
+import activityRoutes from "./routes/activity.routes.js";
 
 dotenv.config();
 
@@ -23,6 +24,7 @@ app.get("/api", (req, res) => {
 
 // Routes
 app.use("/api/users", userRoutes);
+app.use("/api/activities", activityRoutes);
 
 app.listen(PORT, () => {
   connectDB();
