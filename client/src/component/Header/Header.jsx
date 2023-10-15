@@ -17,6 +17,7 @@ const Header = () => {
     try {
       await signOut(auth);
       localStorage.removeItem("currentUser"); //remove in localStorage
+      localStorage.removeItem("accessToken"); 
       navigate("/");
     } catch (error) {
       console.log(err);

@@ -21,8 +21,14 @@ const ProfilePage = () => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
+        const token = localStorage.getItem("accessToken");
         const res = await axios.get(
-          `${import.meta.env.VITE_APP_API_URL}users/${currentUser._id}`
+          `${import.meta.env.VITE_APP_API_URL}users/${currentUser.uid}`,
+          {
+            headers: {
+              "authorization": `Bearer ${token}`,
+            },
+          }
         );
         setUserData(res.data);
         localStorage.setItem("currentUser", JSON.stringify(res.data)); // update user in LocalStorage

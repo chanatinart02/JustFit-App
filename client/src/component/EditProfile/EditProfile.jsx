@@ -15,6 +15,7 @@ const EditProfile = ({ closeModal, modalShow, userData }) => {
   });
 
   const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+ 
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -54,11 +55,19 @@ const EditProfile = ({ closeModal, modalShow, userData }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log("handleSubmit called");
     try {
+      const token = localStorage.getItem("accessToken");
+      console.log("Token:", token); 
       const res = await axios.patch(
-        `${import.meta.env.VITE_APP_API_URL}users/${currentUser._id}`,
-        formData
+        `${import.meta.env.VITE_APP_API_URL}users/${currentUser.uid}`,
+        formData, {
+          headers: {
+            "authorization": `Bearer ${token}`,
+          },
+        }
       );
+      console.log("Response:", res);
       closeModal();
     } catch (error) {
       console.error("Error updating user data:", error);

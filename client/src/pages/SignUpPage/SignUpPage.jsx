@@ -29,7 +29,7 @@ function SignUpPage() {
 
     try {
       await createUserWithEmailAndPassword(auth, email, password).then(
-        (userCredential) => {
+        async (userCredential) => {
           const user = userCredential.user;
           console.log(user);
 
@@ -39,9 +39,12 @@ function SignUpPage() {
             uid: user.uid,
             avatar: user.photoURL,
           };
+          // Get the token after registration
+          const token = await user.getIdToken();
 
-          postUserData(userData);
+          postUserData(userData, token);
           setError("");
+
           navigate("/login");
         }
       );
@@ -67,16 +70,20 @@ function SignUpPage() {
         avatar: user.photoURL,
       };
 
-      await postUserData(userData);
+      await postUserData(userData, token);
       navigate("/");
     } catch (error) {
       console.error("Error logging in with Google:", error);
     }
   };
 
-  const postUserData = async (userData) => {
+  const postUserData = async (userData, idToken) => {
     try {
-      await axios.post(`${import.meta.env.VITE_APP_API_URL}users`, userData);
+      await axios.post(`${import.meta.env.VITE_APP_API_URL}users`, userData, {
+        headers: {
+          Authorization: `Bearer ${idToken}`,
+        },
+      });
     } catch (error) {
       console.error("Error posting user data:", error);
     }

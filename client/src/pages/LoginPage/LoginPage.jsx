@@ -43,8 +43,13 @@ function LoginPage() {
         avatar: user.photoURL,
       };
 
+      const token = await user.getIdToken();
+
+      postUserData(userData, token);
+
       // Send user data to the server
       await postUserData(userData);
+      localStorage.setItem("accessToken", token);
 
       setError("");
       navigate("/dashboard");
@@ -70,7 +75,8 @@ function LoginPage() {
         avatar: user.photoURL,
       };
 
-      await postUserData(userData);
+      await postUserData(userData, token);
+      localStorage.setItem("accessToken", token);
       navigate("/dashboard");
     } catch (error) {
       console.error("Error logging in with Google:", error);
@@ -78,11 +84,16 @@ function LoginPage() {
   };
 
   // Function to post user data to the server
-  const postUserData = async (userData) => {
+  const postUserData = async (userData, idToken) => {
     try {
       const res = await axios.post(
         `${import.meta.env.VITE_APP_API_URL}users`,
-        userData
+        userData,
+        {
+          headers: {
+            "authorization": `Bearer ${idToken}`,
+          },
+        }
       );
 
       // Store current user data in local storage
