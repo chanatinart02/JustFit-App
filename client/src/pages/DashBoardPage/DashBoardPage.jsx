@@ -6,7 +6,7 @@ import { GiPathDistance } from "react-icons/gi";
 import Layout from "../../component/Layout";
 import { burn, award, bin, jogging } from "../../assets";
 import "./Dashboard.css";
-
+import { useAuth } from "../../contexts/AuthContext";
 import {
   ProfileInfo,
   ActivityForm,
@@ -16,9 +16,9 @@ import {
 } from "../../component/Dashboard/index";
 
 function DashBoardPage() {
+  const { currentUser } = useAuth();
   const [activityForm, setActivityForm] = useState(false);
   const [goalForm, setGoalForm] = useState(false);
-  const currentUser = JSON.parse(localStorage.getItem("currentUser"));
 
   const handleAcClose = () => setActivityForm(false);
   const handleAcShow = () => setActivityForm(true);

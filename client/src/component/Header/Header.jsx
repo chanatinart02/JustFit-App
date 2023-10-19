@@ -7,17 +7,19 @@ import LoginBtn from "../LoginBtn/LoginBtn";
 import SignUpBtn from "../SingUpBtn/SignUpBtn";
 import { auth } from "../../services/firebase";
 import { user2 } from "../../assets";
+import { useAuth } from "../../contexts/AuthContext";
 
 const Header = () => {
+  const { currentUser, setToken, setCurrentUser } = useAuth();
   const navigate = useNavigate();
-
-  const currentUser = JSON.parse(localStorage.getItem("currentUser")); // get from login page
 
   const handleLogout = async () => {
     try {
       await signOut(auth);
-      localStorage.removeItem("currentUser"); //remove in localStorage
-      localStorage.removeItem("accessToken"); 
+      setCurrentUser(null);
+      setToken(null);
+      localStorage.removeItem("currentUser");
+      localStorage.removeItem("token");
       navigate("/");
     } catch (error) {
       console.log(err);

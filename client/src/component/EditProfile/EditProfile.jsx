@@ -3,8 +3,10 @@ import { Modal, Button, Form } from "react-bootstrap";
 import axios from "axios";
 
 import genderTypes from "../../constants/genderType";
+import { useAuth } from "../../contexts/AuthContext";
 
-const EditProfile = ({ closeModal, modalShow, userData }) => {
+const EditProfile = ({ closeModal, modalShow }) => {
+  const { currentUser, token, setCurrentUser } = useAuth();
   // const [avatar, setAvatar] = useState({ name: "", url: "" });
   const [formData, setFormData] = useState({
     name: "",
@@ -13,9 +15,6 @@ const EditProfile = ({ closeModal, modalShow, userData }) => {
     height: "",
     weight: "",
   });
-
-  const currentUser = JSON.parse(localStorage.getItem("currentUser"));
- 
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -57,17 +56,17 @@ const EditProfile = ({ closeModal, modalShow, userData }) => {
     e.preventDefault();
     console.log("handleSubmit called");
     try {
-      const token = localStorage.getItem("accessToken");
-      console.log("Token:", token); 
       const res = await axios.patch(
-        `${import.meta.env.VITE_APP_API_URL}users/${currentUser.uid}`,
-        formData, {
+        `${import.meta.env.VITE_APP_API_URL}users/${currentUser._id}`,
+        formData,
+        {
           headers: {
-            "authorization": `Bearer ${token}`,
+            Authorization: `Bearer ${token}`,
           },
         }
       );
       console.log("Response:", res);
+      setCurrentUser(res.data);
       closeModal();
     } catch (error) {
       console.error("Error updating user data:", error);
@@ -90,12 +89,14 @@ const EditProfile = ({ closeModal, modalShow, userData }) => {
         <Form onSubmit={handleSubmit}>
           <Form.Group className="mb-3" controlId="formGroupName">
             <Form.Label>Name</Form.Label>
-            <Form.Control
-              type="text"
-              name="name"
-              onChange={handleChange}
-              value={formData.name || userData.name}
-            />
+            {currentUser && (
+              <Form.Control
+                type="text"
+                name="name"
+                onChange={handleChange}
+                value={formData.name || currentUser.name}
+              />
+            )}
           </Form.Group>
 
           <Form.Group className="mb-3">
@@ -103,7 +104,7 @@ const EditProfile = ({ closeModal, modalShow, userData }) => {
             <Form.Select
               aria-label="gender"
               name="gender"
-              value={formData.gender}
+              value={formData.gender || currentUser.gender}
               onChange={handleChange}
             >
               <option>select your gender</option>
@@ -126,7 +127,7 @@ const EditProfile = ({ closeModal, modalShow, userData }) => {
               id="dateOfBirth"
               style={{ height: "38px" }}
               onChange={handleChange}
-              value={formData.dateOfBirth}
+              value={formData.dateOfBirth || currentUser.age}
             />
           </Form.Group>
 
@@ -136,7 +137,7 @@ const EditProfile = ({ closeModal, modalShow, userData }) => {
             name="height"
             placeholder="167 cm"
             onChange={handleChange}
-            value={formData.height || userData.height}
+            value={formData.height || currentUser.height}
           />
 
           <Form.Label>Weight</Form.Label>
@@ -145,7 +146,7 @@ const EditProfile = ({ closeModal, modalShow, userData }) => {
             name="weight"
             placeholder="47 kg"
             onChange={handleChange}
-            value={formData.weight || userData.weight}
+            value={formData.weight || currentUser.weight}
           />
 
           {/* <Form.Group controlId="formFile" className="mb-3">

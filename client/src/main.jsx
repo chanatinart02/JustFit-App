@@ -11,6 +11,7 @@ import LoginPage from "./pages/LoginPage/LoginPage";
 import SignUpPage from "./pages/SignUpPage/SignUpPage";
 import Recipe from "./pages/Recipes/Recipe-page";
 import ProfilePage from "./pages/Profile/ProfilePage";
+import { AuthProvider } from "./contexts/AuthContext";
 
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
@@ -51,6 +52,8 @@ const router = createBrowserRouter([
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    <RouterProvider router={router} />
+    <AuthProvider>
+      <RouterProvider router={router} />
+    </AuthProvider>
   </React.StrictMode>
 );

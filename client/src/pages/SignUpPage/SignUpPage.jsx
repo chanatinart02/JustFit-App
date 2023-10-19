@@ -36,7 +36,6 @@ function SignUpPage() {
           const userData = {
             name: user.displayName,
             email: user.email,
-            uid: user.uid,
             avatar: user.photoURL,
           };
           // Get the token after registration
@@ -66,7 +65,6 @@ function SignUpPage() {
       const userData = {
         name: user.displayName,
         email: user.email,
-        uid: user.uid,
         avatar: user.photoURL,
       };
 

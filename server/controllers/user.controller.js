@@ -10,7 +10,7 @@ cloudinary.config({
 });
 
 const createUser = asyncHandler(async (req, res) => {
-  const { name, email, avatar, uid } = req.body;
+  const { name, email, avatar } = req.body;
 
   const userExists = await User.findOne({ email });
   if (userExists) {
@@ -21,7 +21,6 @@ const createUser = asyncHandler(async (req, res) => {
     name,
     email,
     avatar,
-    uid,
   });
 
   res.status(201).json(newUser); // 201 for resource created
@@ -29,17 +28,13 @@ const createUser = asyncHandler(async (req, res) => {
 
 const getUserInfoByID = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  const userId = req.user.uid;
 
-  if (userId === id) {
-    const user = await User.findById(id);
-    if (user) {
-      res.status(200).json(user);
-    } else {
-      res.status(404).json({ message: "User not found" });
-    }
+  const user = await User.findOne({ _id: id });
+
+  if (user) {
+    res.status(200).json(user);
   } else {
-    res.status(403).json({ message: "Unauthorized" });
+    res.status(404).json({ message: "User not found" });
   }
 });
 
@@ -47,9 +42,8 @@ const updatesUser = asyncHandler(async (req, res) => {
   const { id } = req.params;
   const { name, gender, age, height, weight } = req.body;
 
-
   const updateUser = await User.findOneAndUpdate(
-    { uid: id },
+    { _id: id },
     { name, gender, age, height, weight },
     {
       new: true,

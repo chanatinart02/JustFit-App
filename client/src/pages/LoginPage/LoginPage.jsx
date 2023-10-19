@@ -6,14 +6,16 @@ import {
   signInWithPopup,
   signInWithEmailAndPassword,
 } from "firebase/auth";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 import "./LoginPage.css";
 import { auth } from "../../services/firebase";
+import { useAuth } from "../../contexts/AuthContext";
 
 function LoginPage() {
+  const { setCurrentUser, setToken } = useAuth();
   const provider = new GoogleAuthProvider();
   const navigate = useNavigate();
 
@@ -39,17 +41,14 @@ function LoginPage() {
       const userData = {
         name: user.displayName,
         email: user.email,
-        uid: user.uid,
         avatar: user.photoURL,
       };
 
       const token = await user.getIdToken();
 
-      postUserData(userData, token);
-
       // Send user data to the server
-      await postUserData(userData);
-      localStorage.setItem("accessToken", token);
+      await postUserData(userData, token);
+      setToken(token);
 
       setError("");
       navigate("/dashboard");
@@ -71,12 +70,11 @@ function LoginPage() {
       const userData = {
         name: user.displayName,
         email: user.email,
-        uid: user.uid,
         avatar: user.photoURL,
       };
 
       await postUserData(userData, token);
-      localStorage.setItem("accessToken", token);
+      setToken(token);
       navigate("/dashboard");
     } catch (error) {
       console.error("Error logging in with Google:", error);
@@ -91,13 +89,13 @@ function LoginPage() {
         userData,
         {
           headers: {
-            "authorization": `Bearer ${idToken}`,
+            Authorization: `Bearer ${idToken}`,
           },
         }
       );
 
-      // Store current user data in local storage
-      localStorage.setItem("currentUser", JSON.stringify(res.data));
+      // Store current user data in context
+      setCurrentUser(res.data);
     } catch (error) {
       console.error("Error posting user data:", error);
     }
