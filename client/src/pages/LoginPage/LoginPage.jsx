@@ -42,6 +42,7 @@ function LoginPage() {
         name: user.displayName,
         email: user.email,
         avatar: user.photoURL,
+        uid: user.uid,
       };
 
       const token = await user.getIdToken();
@@ -64,15 +65,16 @@ function LoginPage() {
     try {
       const result = await signInWithPopup(auth, provider);
       const credential = await GoogleAuthProvider.credentialFromResult(result);
-      const token = credential.accessToken;
       const user = result.user;
+      const token = await user.getIdToken();
 
       const userData = {
         name: user.displayName,
         email: user.email,
         avatar: user.photoURL,
+        uid: user.uid,
       };
-
+      console.log(userData);
       await postUserData(userData, token);
       setToken(token);
       navigate("/dashboard");
@@ -93,7 +95,7 @@ function LoginPage() {
           },
         }
       );
-
+      console.log(res.data);
       // Store current user data in context
       setCurrentUser(res.data);
     } catch (error) {

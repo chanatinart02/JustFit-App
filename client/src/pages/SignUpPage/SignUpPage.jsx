@@ -10,8 +10,10 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 import { auth } from "../../services/firebase";
+import { useAuth } from "../../contexts/AuthContext";
 
 function SignUpPage() {
+  const { setCurrentUser, setToken } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -59,29 +61,39 @@ function SignUpPage() {
     try {
       const result = await signInWithPopup(auth, provider);
       const credential = await GoogleAuthProvider.credentialFromResult(result);
-      const token = credential.accessToken;
       const user = result.user;
+      const token = await user.getIdToken();
 
       const userData = {
         name: user.displayName,
         email: user.email,
         avatar: user.photoURL,
+        uid: user.uid,
       };
 
       await postUserData(userData, token);
-      navigate("/");
+      setToken(token);
+      navigate("/dashboard");
     } catch (error) {
       console.error("Error logging in with Google:", error);
     }
   };
 
+  // Function to post user data to the server
   const postUserData = async (userData, idToken) => {
     try {
-      await axios.post(`${import.meta.env.VITE_APP_API_URL}users`, userData, {
-        headers: {
-          Authorization: `Bearer ${idToken}`,
-        },
-      });
+      const res = await axios.post(
+        `${import.meta.env.VITE_APP_API_URL}users`,
+        userData,
+        {
+          headers: {
+            Authorization: `Bearer ${idToken}`,
+          },
+        }
+      );
+
+      // Store current user data in context
+      setCurrentUser(res.data);
     } catch (error) {
       console.error("Error posting user data:", error);
     }

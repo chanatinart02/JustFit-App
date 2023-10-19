@@ -11,8 +11,6 @@ import { useAuth } from "../../contexts/AuthContext";
 const ProfilePage = () => {
   const { currentUser, token, setCurrentUser } = useAuth();
   const [modalShow, setModalShow] = useState(false);
-  console.log(currentUser); //null
-  console.log("token", token); //null
 
   useEffect(() => {
     const fetchUser = async () => {

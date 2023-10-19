@@ -10,6 +10,7 @@ const verifyToken = async (req, res, next) => {
   const token = authHeader.split(" ")[1]; // Extract the token from the "Bearer" string
   try {
     const decodedToken = await admin.auth().verifyIdToken(token);
+
     if (decodedToken) {
       req.user = decodedToken;
       return next();
