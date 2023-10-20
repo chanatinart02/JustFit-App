@@ -1,15 +1,11 @@
 import React, { useState } from "react";
 import { Modal, Button, Form, Row, Col } from "react-bootstrap";
-import TimeRangePicker from "@wojtekmaj/react-timerange-picker";
-import "@wojtekmaj/react-timerange-picker/dist/TimeRangePicker.css";
-import "react-clock/dist/Clock.css";
+
 import axios from "axios";
 
 import activitiesType from "../../constants/activitiesType";
 
 const EditActivity = ({ editShow, handleEditClose }) => {
-  const [value, onChange] = useState(new Date()); // time picker
-
   return (
     <Modal
       show={editShow}
@@ -69,11 +65,6 @@ const EditActivity = ({ editShow, handleEditClose }) => {
 
             <Form.Group as={Col} className="mb-3 d-flex flex-column">
               <Form.Label>Start - End Time</Form.Label>
-              <TimeRangePicker
-                className="time-range"
-                onChange={onChange}
-                value={value}
-              />
             </Form.Group>
           </Row>
 

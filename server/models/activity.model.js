@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const ActivitySchema = new mongoose.Schema({
   userId: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
-  activityType: {
+  typeOfActivity: {
     type: String,
     required: true,
   },
@@ -10,7 +10,7 @@ const ActivitySchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  createdAt: {
+  dateOfActivity: {
     type: Date,
     default: new Date(),
   },

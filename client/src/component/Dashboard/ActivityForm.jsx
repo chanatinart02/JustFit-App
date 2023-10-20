@@ -1,14 +1,92 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Modal, Button, Form, Row, Col } from "react-bootstrap";
-import TimeRangePicker from "@wojtekmaj/react-timerange-picker";
-import "@wojtekmaj/react-timerange-picker/dist/TimeRangePicker.css";
-import "react-clock/dist/Clock.css";
 import axios from "axios";
 
-import activitiesType from "../../constants/activitiesType";
+import activities from "../../constants/activitiesType";
 
 const ActivityForm = ({ activityForm, handleAcClose }) => {
-  const [value, onChange] = useState(new Date()); // time picker
+  const [formData, setFormData] = useState({
+    typeOfActivity: "",
+    title: "",
+    dateOfActivity: "",
+    duration: 0,
+    energyBurn: 0,
+    distance: 0,
+    description: "",
+  });
+  const [hour, setHour] = useState(0);
+  const [minute, setMinute] = useState(0);
+
+  const handleChange = (e) => {
+    // Destructuring the event object to get the name and value
+    const { name, value } = e.target;
+
+    if (name === "hour") {
+      setHour(value);
+    } else if (name === "minute") {
+      setMinute(value);
+    }
+    // Get the new hour and minute values
+    const newHour = name === "hour" ? value : hour;
+    const newMinute = name === "minute" ? value : minute;
+
+    const duration = calculateTime(newHour, newMinute);
+    const energyBurn = calculateEnergyBurn(formData.typeOfActivity, duration);
+
+    // Calculate the duration based on the updated hour and minute
+    setFormData((prevData) => ({
+      ...prevData,
+      duration,
+      energyBurn,
+      [name]: value,
+    }));
+  };
+
+  function calculateTime(hour, minute) {
+    let totalMinutes = parseInt(hour, 10) * 60 + parseInt(minute, 10);
+    return totalMinutes;
+  }
+
+  const calculateEnergyBurn = (activityType, duration) => {
+    const selectedActivity = activities.find(
+      (activity) => activity.name === activityType
+    );
+    if (selectedActivity) {
+      const caloriesPerMinute = selectedActivity.caloriesPerMinute;
+      const totalCaloriesBurned = caloriesPerMinute * duration;
+      return totalCaloriesBurned;
+    } else {
+      return 0;
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      setFormData({
+        ...formData,
+      });
+      console.log(formData);
+      // Send form data to server
+      // await axios.post("/api/activities", updatedFormData);
+
+      setFormData({
+        typeOfActivity: "",
+        title: "",
+        dateOfActivity: "",
+        duration: 0,
+        energyBurn: 0,
+        distance: 0,
+        description: "",
+      });
+      setHour(null);
+      setMinute(null);
+      handleAcClose();
+    } catch (error) {
+      console.error("Error creating activity:", error);
+    }
+  };
+
   return (
     <Modal
       show={activityForm}
@@ -19,26 +97,30 @@ const ActivityForm = ({ activityForm, handleAcClose }) => {
       <Modal.Header
         closeButton
         onClick={handleAcClose}
-        style={{ backgroundColor: "#8a2be2", color: "white" }}
+        style={{
+          backgroundColor: "#8a2be2",
+          color: "white",
+        }}
       >
         <Modal.Title id="contained-modal-title-vcenter">
           Create Activity
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <Form onSubmit="">
+        <Form onSubmit={handleSubmit}>
           <Form.Group className="mb-3">
             <Form.Label>Choose Activity</Form.Label>
             <Form.Select
-              aria-label="activity"
-              name="activity"
-              value="{}"
-              onChange=""
+              aria-label="typeOfActivity"
+              name="typeOfActivity"
+              value={formData.typeOfActivity}
+              onChange={handleChange}
+              required
             >
               <option>select your activity</option>
-              {activitiesType.map((activity) => (
-                <option key={activity} value={activity}>
-                  {activity}
+              {activities.map((activity) => (
+                <option key={activity.name} value={activity.name}>
+                  {activity.name}
                 </option>
               ))}
             </Form.Select>
@@ -46,7 +128,13 @@ const ActivityForm = ({ activityForm, handleAcClose }) => {
 
           <Form.Group className="mb-3" controlId="formGroupTitle">
             <Form.Label>Habit Title</Form.Label>
-            <Form.Control type="text" name="title" onChange="" value="" />
+            <Form.Control
+              type="text"
+              name="title"
+              onChange={handleChange}
+              value={formData.title}
+              required
+            />
           </Form.Group>
 
           <Row>
@@ -60,19 +148,38 @@ const ActivityForm = ({ activityForm, handleAcClose }) => {
                 type="date"
                 name="dateOfActivity"
                 id="dateOfActivity"
-                style={{ height: "38px" }}
-                // onChange={handleChange}
-                // value={formData.dateOfBirth}
+                style={{
+                  height: "38px",
+                }}
+                onChange={handleChange}
+                value={formData.dateOfActivity}
+                required
               />
             </Form.Group>
 
             <Form.Group as={Col} className="mb-3 d-flex flex-column">
-              <Form.Label>Start - End Time</Form.Label>
-              <TimeRangePicker
-                className="time-range"
-                onChange={onChange}
-                value={value}
-              />
+              <Form.Label>Time</Form.Label>
+              <div className="d-flex">
+                <Form.Control
+                  type="number"
+                  min="0"
+                  max="10000"
+                  placeholder="Hour"
+                  className="mr-2"
+                  value={hour}
+                  onChange={handleChange}
+                  name="hour"
+                />
+                <Form.Control
+                  type="number"
+                  min="0"
+                  max="59"
+                  placeholder="Minute"
+                  value={minute}
+                  onChange={handleChange}
+                  name="minute"
+                />
+              </div>
             </Form.Group>
           </Row>
 
@@ -81,10 +188,9 @@ const ActivityForm = ({ activityForm, handleAcClose }) => {
               <Form.Label>Energy burn (Calories)</Form.Label>
               <Form.Control
                 type="number"
-                name="cal"
+                name="energyBurn"
                 disabled
-                // onChange={handleChange}
-                // value={formData.height || userData.height}
+                value={formData.energyBurn}
               />
             </Form.Group>
             <Form.Group as={Col} className="mb-3">
@@ -92,8 +198,8 @@ const ActivityForm = ({ activityForm, handleAcClose }) => {
               <Form.Control
                 type="number"
                 name="distance"
-                // onChange={handleChange}
-                // value={formData.height || userData.height}
+                onChange={handleChange}
+                value={formData.distance}
               />
             </Form.Group>
           </Row>
@@ -103,6 +209,9 @@ const ActivityForm = ({ activityForm, handleAcClose }) => {
               as="textarea"
               rows={3}
               placeholder="describe your activity"
+              name="description"
+              onChange={handleChange}
+              value={formData.description}
             />
           </Form.Group>
 
@@ -113,7 +222,10 @@ const ActivityForm = ({ activityForm, handleAcClose }) => {
 
             <Button
               onClick={handleAcClose}
-              style={{ backgroundColor: "#FF4878", border: "none" }}
+              style={{
+                backgroundColor: "#FF4878",
+                border: "none",
+              }}
             >
               Close
             </Button>

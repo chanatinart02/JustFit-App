@@ -32,7 +32,6 @@ const EditProfile = ({ closeModal, modalShow }) => {
         [name]: value,
       });
     }
-    console.log(formData);
   };
 
   const calculateAge = (dateOfBirth) => {
@@ -54,7 +53,7 @@ const EditProfile = ({ closeModal, modalShow }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("handleSubmit called");
+
     try {
       const res = await axios.patch(
         `${import.meta.env.VITE_APP_API_URL}users/${currentUser._id}`,
@@ -65,7 +64,7 @@ const EditProfile = ({ closeModal, modalShow }) => {
           },
         }
       );
-      console.log("Response:", res);
+
       setCurrentUser(res.data);
       closeModal();
     } catch (error) {
