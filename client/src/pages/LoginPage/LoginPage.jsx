@@ -35,7 +35,6 @@ function LoginPage() {
       );
       // Get the user information
       const user = userCredential.user;
-      // console.log(user);
 
       // Prepare user data for DB
       const userData = {
@@ -74,7 +73,7 @@ function LoginPage() {
         avatar: user.photoURL,
         uid: user.uid,
       };
-      console.log(userData);
+      // console.log(userData);
       await postUserData(userData, token);
       setToken(token);
       navigate("/dashboard");
@@ -95,7 +94,7 @@ function LoginPage() {
           },
         }
       );
-      console.log(res.data);
+
       // Store current user data in context
       setCurrentUser(res.data);
     } catch (error) {
