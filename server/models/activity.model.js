@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 const ActivitySchema = new mongoose.Schema({
-  userId: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
   typeOfActivity: {
     type: String,
     required: true,

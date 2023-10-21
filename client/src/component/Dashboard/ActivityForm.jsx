@@ -15,6 +15,7 @@ const ActivityForm = ({ activityForm, handleAcClose }) => {
     energyBurn: 0,
     distance: 0,
     description: "",
+    email: currentUser.email,
   });
   const [hour, setHour] = useState(0);
   const [minute, setMinute] = useState(0);
@@ -80,7 +81,7 @@ const ActivityForm = ({ activityForm, handleAcClose }) => {
           },
         }
       );
-      console.log(res.data);
+      console.log("Activity created:", res.data);
       setFormData({
         typeOfActivity: "",
         title: "",
@@ -89,6 +90,7 @@ const ActivityForm = ({ activityForm, handleAcClose }) => {
         energyBurn: 0,
         distance: 0,
         description: "",
+        email: currentUser.email,
       });
       setHour(null);
       setMinute(null);

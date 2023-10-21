@@ -1,5 +1,6 @@
 import asyncHandler from "express-async-handler";
 import Activity from "../models/activity.model.js";
+import User from "../models/user.model.js";
 
 const createActivity = asyncHandler(async (req, res) => {
   const {
@@ -10,11 +11,13 @@ const createActivity = asyncHandler(async (req, res) => {
     energyBurn,
     distance,
     description,
+    email,
   } = req.body;
-  const userId = req.user.uid;
+  const user = await User.findOne({ email });
+  if (!user) throw new Error("User not fond");
 
-  const newActivity = new Activity({
-    userId,
+  const newActivity = await Activity.create({
+    userId: user._id,
     typeOfActivity,
     title,
     dateOfActivity,
