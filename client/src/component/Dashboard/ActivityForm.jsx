@@ -3,8 +3,10 @@ import { Modal, Button, Form, Row, Col } from "react-bootstrap";
 import axios from "axios";
 
 import activities from "../../constants/activitiesType";
+import { useAuth } from "../../contexts/AuthContext";
 
 const ActivityForm = ({ activityForm, handleAcClose }) => {
+  const { currentUser, token, setCurrentUser } = useAuth();
   const [formData, setFormData] = useState({
     typeOfActivity: "",
     title: "",
@@ -66,10 +68,19 @@ const ActivityForm = ({ activityForm, handleAcClose }) => {
       setFormData({
         ...formData,
       });
-      console.log(formData);
+
       // Send form data to server
       // await axios.post("/api/activities", updatedFormData);
-
+      const res = await axios.post(
+        `${import.meta.env.VITE_APP_API_URL}activities/`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      console.log(res.data);
       setFormData({
         typeOfActivity: "",
         title: "",
