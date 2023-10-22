@@ -10,7 +10,8 @@ import verifyToken from "../middleware/verifyToken.js";
 const router = express.Router();
 
 router.post("/", verifyToken, createActivity);
-router.route("/").get(getAllActivities);
+router.get("/:id", verifyToken, getAllActivities);
+
 router.route("/:id").delete(deleteActivities);
 router.route("/:id").patch(updateActivities);
 

@@ -4,6 +4,7 @@ import axios from "axios";
 
 import activities from "../../constants/activitiesType";
 import { useAuth } from "../../contexts/AuthContext";
+import { calculateTime, calculateEnergyBurn } from "../../Utils/activityUtils";
 
 const ActivityForm = ({ activityForm, handleAcClose }) => {
   const { currentUser, token, setCurrentUser } = useAuth();
@@ -45,24 +46,6 @@ const ActivityForm = ({ activityForm, handleAcClose }) => {
     }));
   };
 
-  function calculateTime(hour, minute) {
-    let totalMinutes = parseInt(hour, 10) * 60 + parseInt(minute, 10);
-    return totalMinutes;
-  }
-
-  const calculateEnergyBurn = (activityType, duration) => {
-    const selectedActivity = activities.find(
-      (activity) => activity.name === activityType
-    );
-    if (selectedActivity) {
-      const caloriesPerMinute = selectedActivity.caloriesPerMinute;
-      const totalCaloriesBurned = caloriesPerMinute * duration;
-      return totalCaloriesBurned;
-    } else {
-      return 0;
-    }
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -71,7 +54,6 @@ const ActivityForm = ({ activityForm, handleAcClose }) => {
       });
 
       // Send form data to server
-      // await axios.post("/api/activities", updatedFormData);
       const res = await axios.post(
         `${import.meta.env.VITE_APP_API_URL}activities/`,
         formData,

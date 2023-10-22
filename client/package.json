@@ -12,6 +12,7 @@
     "@splidejs/react-splide": "^0.7.12",
     "axios": "^1.4.0",
     "bootstrap": "^5.2.3",
+    "dayjs": "^1.11.10",
     "dotenv": "^16.0.3",
     "firebase": "^10.4.0",
     "framer-motion": "^10.12.7",

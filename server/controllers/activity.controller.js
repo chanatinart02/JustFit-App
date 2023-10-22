@@ -31,13 +31,18 @@ const createActivity = asyncHandler(async (req, res) => {
 
     res.status(201).json(saveActivity);
   } catch (error) {
-    // Pass any errors to the error handling middleware
     console.error(error);
   }
 });
 
 const getAllActivities = asyncHandler(async (req, res) => {
-  res.status(200).send("get all");
+  const { id } = req.params;
+  const activities = await Activity.find({ userId: id });
+  if (activities) {
+    res.status(200).json(activities);
+  } else {
+    res.status(404).json({ message: "Activities not found" });
+  }
 });
 
 const updateActivities = asyncHandler(async (req, res) => {

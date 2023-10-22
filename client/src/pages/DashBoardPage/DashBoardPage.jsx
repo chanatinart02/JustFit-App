@@ -1,12 +1,14 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Container, Row, Col, Card, Image, Button } from "react-bootstrap";
 import { BiTimeFive, BiEdit } from "react-icons/bi";
 import { GiPathDistance } from "react-icons/gi";
+import axios from "axios";
 
 import Layout from "../../component/Layout";
 import { burn, award, bin, jogging } from "../../assets";
 import "./Dashboard.css";
 import { useAuth } from "../../contexts/AuthContext";
+import { useActivities } from "../../contexts/ActivityContext";
 import {
   ProfileInfo,
   ActivityForm,
@@ -16,9 +18,30 @@ import {
 } from "../../component/Dashboard/index";
 
 function DashBoardPage() {
-  const { currentUser } = useAuth();
+  const { currentUser, token } = useAuth();
+  const { activities, setActivities } = useActivities();
+
   const [activityForm, setActivityForm] = useState(false);
   const [goalForm, setGoalForm] = useState(false);
+
+  useEffect(() => {
+    const fetchActivities = async () => {
+      try {
+        const res = await axios.get(
+          `${import.meta.env.VITE_APP_API_URL}activities/${currentUser._id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        setActivities(res.data);
+      } catch (error) {
+        console.error("Error fetching activities data:", error);
+      }
+    };
+    fetchActivities();
+  }, [activities]);
 
   const handleAcClose = () => setActivityForm(false);
   const handleAcShow = () => setActivityForm(true);
@@ -131,7 +154,19 @@ function DashBoardPage() {
                 </Button>
 
                 {/* activities added */}
-                <ActivitiesCards />
+                {activities.map((activity) => (
+                  <ActivitiesCards
+                    key={activity._id}
+                    id={activity._id}
+                    typeOfActivity={activity.typeOfActivity}
+                    title={activity.title}
+                    dateOfActivity={activity.dateOfActivity}
+                    duration={activity.duration}
+                    energyBurn={activity.energyBurn}
+                    distance={activity.distance}
+                    description={activity.description}
+                  />
+                ))}
               </Card.Body>
             </Card>
           </Col>
