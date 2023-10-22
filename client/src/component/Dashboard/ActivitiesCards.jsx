@@ -8,8 +8,10 @@ import EditActivity from "./EditActivity";
 import ActivityDelete from "./ActivityDelete";
 import { convertToHoursAndMinutes } from "../../Utils/activityUtils";
 import activities from "../../constants/activitiesType";
+import { useActivities } from "../../contexts/ActivityContext";
 
 const ActivitiesCards = ({
+  id,
   typeOfActivity,
   title,
   dateOfActivity,
@@ -18,6 +20,7 @@ const ActivitiesCards = ({
   distance,
   description,
 }) => {
+  const { setSelectedActivity } = useActivities();
   const [editShow, setEditShow] = useState(false);
   const [deleteShow, setDeleteShow] = useState(false);
 
@@ -27,8 +30,20 @@ const ActivitiesCards = ({
     (activity) => activity.name === typeOfActivity
   );
 
+  const handleEditShow = () => {
+    setEditShow(true);
+    setSelectedActivity({
+      id,
+      typeOfActivity,
+      title,
+      dateOfActivity,
+      duration,
+      energyBurn,
+      distance,
+      description,
+    });
+  };
   const handleEditClose = () => setEditShow(false);
-  const handleEditShow = () => setEditShow(true);
   const handleDeleteClose = () => setDeleteShow(false);
   const handleDeleteShow = () => setDeleteShow(true);
   return (
@@ -70,7 +85,11 @@ const ActivitiesCards = ({
       </Card>
 
       {/* Modals */}
-      <EditActivity editShow={editShow} handleEditClose={handleEditClose} />
+      <EditActivity
+        editShow={editShow}
+        handleEditClose={handleEditClose}
+        id={id}
+      />
       <ActivityDelete
         deleteShow={deleteShow}
         handleDeleteClose={handleDeleteClose}

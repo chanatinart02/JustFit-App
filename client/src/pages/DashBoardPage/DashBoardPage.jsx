@@ -36,12 +36,14 @@ function DashBoardPage() {
           }
         );
         setActivities(res.data);
+        // console.log(res.data);
       } catch (error) {
         console.error("Error fetching activities data:", error);
       }
     };
     fetchActivities();
   }, [activities]);
+  // console.log(activities);
 
   const handleAcClose = () => setActivityForm(false);
   const handleAcShow = () => setActivityForm(true);
@@ -51,7 +53,7 @@ function DashBoardPage() {
   return (
     <Layout>
       <Container>
-        <h2 className="mt-2 mb-0">Hello, {currentUser.name}</h2>
+        <h2 className="mt-2 mb-0">Hello, {currentUser.name || "Anonymous"}</h2>
         <p className="fs-5">Keep Moving & Stay Healty</p>
         <Row className="total-profile">
           <Col className="total">

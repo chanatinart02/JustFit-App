@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Modal, Button, Form, Row, Col } from "react-bootstrap";
 import axios from "axios";
 
-import activities from "../../constants/activitiesType";
+import activitiesType from "../../constants/activitiesType";
 import { useAuth } from "../../contexts/AuthContext";
 import { calculateTime, calculateEnergyBurn } from "../../Utils/activityUtils";
 
@@ -113,7 +113,7 @@ const ActivityForm = ({ activityForm, handleAcClose }) => {
               required
             >
               <option>select your activity</option>
-              {activities.map((activity) => (
+              {activitiesType.map((activity) => (
                 <option key={activity.name} value={activity.name}>
                   {activity.name}
                 </option>

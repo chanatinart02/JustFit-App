@@ -46,8 +46,40 @@ const getAllActivities = asyncHandler(async (req, res) => {
 });
 
 const updateActivities = asyncHandler(async (req, res) => {
-  res.status(200).send("update");
+  const { id } = req.params;
+  const {
+    typeOfActivity,
+    title,
+    dateOfActivity,
+    duration,
+    energyBurn,
+    distance,
+    description,
+  } = req.body;
+
+  const updateActivity = await Activity.findOneAndUpdate(
+    {
+      _id: id,
+    },
+    {
+      typeOfActivity,
+      title,
+      dateOfActivity,
+      duration,
+      energyBurn,
+      distance,
+      description,
+    },
+    { new: true }
+  );
+
+  if (!updateActivity) {
+    return res.status(404).json({ message: "Activity not found" });
+  }
+
+  res.status(200).json({ message: "Activity updated success" });
 });
+
 const deleteActivities = asyncHandler(async (req, res) => {
   res.status(200).send("delete");
 });

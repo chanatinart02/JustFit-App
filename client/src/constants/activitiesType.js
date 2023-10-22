@@ -1,6 +1,6 @@
 import { jogging, pilates, waist, yoga, zumba } from "../assets";
 
-const activities = [
+const activitiesType = [
   {
     name: "Jogging",
     caloriesPerMinute: 10,
@@ -28,4 +28,4 @@ const activities = [
   },
 ];
 
-export default activities;
+export default activitiesType;

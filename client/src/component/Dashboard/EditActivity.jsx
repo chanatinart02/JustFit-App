@@ -1,11 +1,78 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Modal, Button, Form, Row, Col } from "react-bootstrap";
-
 import axios from "axios";
 
 import activitiesType from "../../constants/activitiesType";
+import { useActivities } from "../../contexts/ActivityContext";
+import { useAuth } from "../../contexts/AuthContext";
+import { calculateTime, calculateEnergyBurn } from "../../Utils/activityUtils";
 
 const EditActivity = ({ editShow, handleEditClose }) => {
+  const { activities, setActivities, selectedActivity } = useActivities();
+  const { token } = useAuth();
+  const [formData, setFormData] = useState({
+    typeOfActivity: "",
+    title: "",
+    dateOfActivity: "",
+    duration: 0,
+    energyBurn: 0,
+    distance: 0,
+    description: "",
+  });
+  const [hour, setHour] = useState(0);
+  const [minute, setMinute] = useState(0);
+
+  useEffect(() => {
+    if (selectedActivity) {
+      setFormData(selectedActivity);
+    }
+  }, [selectedActivity]);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+
+    if (name === "hour") {
+      setHour(value);
+    } else if (name === "minute") {
+      setMinute(value);
+    }
+
+    const newHour = name === "hour" ? value : hour;
+    const newMinute = name === "minute" ? value : minute;
+
+    const duration = calculateTime(newHour, newMinute);
+    const energyBurn = calculateEnergyBurn(formData.typeOfActivity, duration);
+
+    setFormData((prevData) => ({
+      ...prevData,
+      duration,
+      energyBurn,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      setFormData({
+        ...formData,
+      });
+
+      await axios.patch(
+        `${import.meta.env.VITE_APP_API_URL}activities/${selectedActivity.id}`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      handleEditClose();
+    } catch (error) {
+      console.error("Error updating activity:", error);
+    }
+  };
+
   return (
     <Modal
       show={editShow}
@@ -23,19 +90,19 @@ const EditActivity = ({ editShow, handleEditClose }) => {
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <Form onSubmit="">
+        <Form onSubmit={handleSubmit}>
           <Form.Group className="mb-3">
             <Form.Label>Choose Activity</Form.Label>
             <Form.Select
-              aria-label="activity"
-              name="activity"
-              value="{}"
-              onChange=""
+              aria-label="typeOfActivity"
+              name="typeOfActivity"
+              value={formData.typeOfActivity}
+              onChange={handleChange}
             >
               <option>select your activity</option>
               {activitiesType.map((activity) => (
-                <option key={activity} value={activity}>
-                  {activity}
+                <option key={activity.name} value={activity.name}>
+                  {activity.name}
                 </option>
               ))}
             </Form.Select>
@@ -43,7 +110,12 @@ const EditActivity = ({ editShow, handleEditClose }) => {
 
           <Form.Group className="mb-3" controlId="formGroupTitle">
             <Form.Label>Habit Title</Form.Label>
-            <Form.Control type="text" name="title" onChange="" value="" />
+            <Form.Control
+              type="text"
+              name="title"
+              onChange={handleChange}
+              value={formData.title}
+            />
           </Form.Group>
 
           <Row>
@@ -58,13 +130,34 @@ const EditActivity = ({ editShow, handleEditClose }) => {
                 name="dateOfActivity"
                 id="dateOfActivity"
                 style={{ height: "38px" }}
-                // onChange={handleChange}
-                // value={formData.dateOfBirth}
+                onChange={handleChange}
+                value={formData.dateOfActivity}
               />
             </Form.Group>
 
             <Form.Group as={Col} className="mb-3 d-flex flex-column">
-              <Form.Label>Start - End Time</Form.Label>
+              <Form.Label>Time</Form.Label>
+              <div className="d-flex">
+                <Form.Control
+                  type="number"
+                  min="0"
+                  max="10000"
+                  placeholder="Hour"
+                  className="mr-2"
+                  value={hour}
+                  onChange={handleChange}
+                  name="hour"
+                />
+                <Form.Control
+                  type="number"
+                  min="0"
+                  max="59"
+                  placeholder="Minute"
+                  value={minute}
+                  onChange={handleChange}
+                  name="minute"
+                />
+              </div>
             </Form.Group>
           </Row>
 
@@ -73,10 +166,9 @@ const EditActivity = ({ editShow, handleEditClose }) => {
               <Form.Label>Energy burn (Calories)</Form.Label>
               <Form.Control
                 type="number"
-                name="cal"
+                name="energyBurn"
                 disabled
-                // onChange={handleChange}
-                // value={formData.height || userData.height}
+                value={formData.energyBurn}
               />
             </Form.Group>
             <Form.Group as={Col} className="mb-3">
@@ -84,8 +176,8 @@ const EditActivity = ({ editShow, handleEditClose }) => {
               <Form.Control
                 type="number"
                 name="distance"
-                // onChange={handleChange}
-                // value={formData.height || userData.height}
+                onChange={handleChange}
+                value={formData.distance}
               />
             </Form.Group>
           </Row>
@@ -95,6 +187,9 @@ const EditActivity = ({ editShow, handleEditClose }) => {
               as="textarea"
               rows={3}
               placeholder="describe your activity"
+              name="description"
+              onChange={handleChange}
+              value={formData.description}
             />
           </Form.Group>
 
