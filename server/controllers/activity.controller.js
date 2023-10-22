@@ -81,7 +81,19 @@ const updateActivities = asyncHandler(async (req, res) => {
 });
 
 const deleteActivities = asyncHandler(async (req, res) => {
-  res.status(200).send("delete");
+  const { id } = req.params;
+
+  try {
+    const deleteActivity = await Activity.findByIdAndDelete({ _id: id });
+
+    if (!deleteActivity) {
+      return res.status(404).json({ message: "Activity not found" });
+    }
+
+    res.status(200).json({ message: "Activity deleted" });
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error" });
+  }
 });
 
 export { createActivity, getAllActivities, updateActivities, deleteActivities };

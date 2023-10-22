@@ -8,7 +8,7 @@ import { useAuth } from "../../contexts/AuthContext";
 import { calculateTime, calculateEnergyBurn } from "../../Utils/activityUtils";
 
 const EditActivity = ({ editShow, handleEditClose }) => {
-  const { activities, setActivities, selectedActivity } = useActivities();
+  const { selectedActivity, setActivities } = useActivities();
   const { token } = useAuth();
   const [formData, setFormData] = useState({
     typeOfActivity: "",
@@ -58,7 +58,7 @@ const EditActivity = ({ editShow, handleEditClose }) => {
         ...formData,
       });
 
-      await axios.patch(
+      const res = await axios.patch(
         `${import.meta.env.VITE_APP_API_URL}activities/${selectedActivity.id}`,
         formData,
         {
@@ -67,6 +67,7 @@ const EditActivity = ({ editShow, handleEditClose }) => {
           },
         }
       );
+
       handleEditClose();
     } catch (error) {
       console.error("Error updating activity:", error);

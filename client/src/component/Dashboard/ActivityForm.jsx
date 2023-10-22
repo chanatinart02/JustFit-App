@@ -4,10 +4,12 @@ import axios from "axios";
 
 import activitiesType from "../../constants/activitiesType";
 import { useAuth } from "../../contexts/AuthContext";
+import { useActivities } from "../../contexts/ActivityContext";
 import { calculateTime, calculateEnergyBurn } from "../../Utils/activityUtils";
 
 const ActivityForm = ({ activityForm, handleAcClose }) => {
-  const { currentUser, token, setCurrentUser } = useAuth();
+  const { currentUser, token } = useAuth();
+  const { activities, setActivities } = useActivities();
   const [formData, setFormData] = useState({
     typeOfActivity: "",
     title: "",
@@ -54,7 +56,7 @@ const ActivityForm = ({ activityForm, handleAcClose }) => {
       });
 
       // Send form data to server
-      const res = await axios.post(
+      await axios.post(
         `${import.meta.env.VITE_APP_API_URL}activities/`,
         formData,
         {
@@ -63,12 +65,12 @@ const ActivityForm = ({ activityForm, handleAcClose }) => {
           },
         }
       );
-      console.log("Activity created:", res.data);
+
+      // clear
       setFormData({
         typeOfActivity: "",
         title: "",
         dateOfActivity: "",
-        duration: 0,
         energyBurn: 0,
         distance: 0,
         description: "",

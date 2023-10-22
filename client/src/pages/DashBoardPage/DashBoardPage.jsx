@@ -36,14 +36,12 @@ function DashBoardPage() {
           }
         );
         setActivities(res.data);
-        // console.log(res.data);
       } catch (error) {
         console.error("Error fetching activities data:", error);
       }
     };
     fetchActivities();
-  }, [activities]);
-  // console.log(activities);
+  }, [currentUser._id, token, activities]);
 
   const handleAcClose = () => setActivityForm(false);
   const handleAcShow = () => setActivityForm(true);

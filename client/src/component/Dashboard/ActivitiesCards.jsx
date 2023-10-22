@@ -45,7 +45,10 @@ const ActivitiesCards = ({
   };
   const handleEditClose = () => setEditShow(false);
   const handleDeleteClose = () => setDeleteShow(false);
-  const handleDeleteShow = () => setDeleteShow(true);
+  const handleDeleteShow = () => {
+    setDeleteShow(true);
+    setSelectedActivity({ id });
+  };
   return (
     <>
       <Card>
@@ -85,11 +88,7 @@ const ActivitiesCards = ({
       </Card>
 
       {/* Modals */}
-      <EditActivity
-        editShow={editShow}
-        handleEditClose={handleEditClose}
-        id={id}
-      />
+      <EditActivity editShow={editShow} handleEditClose={handleEditClose} />
       <ActivityDelete
         deleteShow={deleteShow}
         handleDeleteClose={handleDeleteClose}
