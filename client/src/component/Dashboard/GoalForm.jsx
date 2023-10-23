@@ -1,9 +1,73 @@
 import React, { useState } from "react";
 import { Modal, Button, Form, Row, Col } from "react-bootstrap";
+import axios from "axios";
 
 import activitiesType from "../../constants/activitiesType";
+import { useAuth } from "../../contexts/AuthContext";
+import { calculateTime } from "../../Utils/activityUtils";
 
 function GoalForm({ goalForm, handleGoalClose }) {
+  const { currentUser, token } = useAuth();
+  const [formData, setFormData] = useState({
+    typeOfGoal: "",
+    deadline: "",
+    duration: 0,
+    energyBurn: 0,
+    distance: 0,
+    email: currentUser.email,
+  });
+  const [hour, setHour] = useState(0);
+  const [minute, setMinute] = useState(0);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+
+    if (name === "hour") {
+      setHour(value);
+    } else if (name === "minute") {
+      setMinute(value);
+    }
+
+    const newHour = name === "hour" ? value : hour;
+    const newMinute = name === "minute" ? value : minute;
+
+    const duration = calculateTime(newHour, newMinute);
+
+    setFormData((prevData) => ({
+      ...prevData,
+      duration,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      setFormData({
+        ...formData,
+      });
+
+      await axios.post(`${import.meta.env.VITE_APP_API_URL}goals/`, formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      // clear
+      setFormData({
+        typeOfGoal: "",
+        deadline: "",
+        energyBurn: 0,
+        distance: 0,
+        email: currentUser.email,
+      });
+      setHour(null);
+      setMinute(null);
+      handleGoalClose();
+    } catch (error) {
+      console.error("Error creating goal:", error);
+    }
+  };
   return (
     <Modal
       show={goalForm}
@@ -19,23 +83,44 @@ function GoalForm({ goalForm, handleGoalClose }) {
         <Modal.Title id="contained-modal-title-vcenter">Set Goal</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <Form onSubmit="">
-          <Form.Group className="mb-3">
-            <Form.Label>Choose Activity</Form.Label>
-            <Form.Select
-              aria-label="activity"
-              name="activity"
-              value="{}"
-              onChange=""
+        <Form onSubmit={handleSubmit}>
+          <Row>
+            <Form.Group as={Col} className="mb-3">
+              <Form.Label>Choose Activity</Form.Label>
+              <Form.Select
+                aria-label="typeOfGoal"
+                name="typeOfGoal"
+                value={formData.typeOfGoal}
+                onChange={handleChange}
+              >
+                <option>select your activity</option>
+                {activitiesType.map((activity) => (
+                  <option key={activity.name} value={activity.name}>
+                    {activity.name}
+                  </option>
+                ))}
+              </Form.Select>
+            </Form.Group>
+
+            <Form.Group
+              as={Col}
+              className="mb-3 d-flex flex-column"
+              controlId="dateTime"
             >
-              <option>select your activity</option>
-              {activitiesType.map((activity) => (
-                <option key={activity} value={activity}>
-                  {activity}
-                </option>
-              ))}
-            </Form.Select>
-          </Form.Group>
+              <Form.Label>Finish Date</Form.Label>
+              <input
+                type="date"
+                name="deadline"
+                id="deadline"
+                style={{
+                  height: "38px",
+                }}
+                onChange={handleChange}
+                value={formData.deadline}
+                required
+              />
+            </Form.Group>
+          </Row>
 
           <h5>Your challenge</h5>
           <Row>
@@ -43,9 +128,9 @@ function GoalForm({ goalForm, handleGoalClose }) {
               <Form.Label>Energy burn (Calories)</Form.Label>
               <Form.Control
                 type="number"
-                name="cal"
-                // onChange={handleChange}
-                // value={formData.height || userData.height}
+                name="energyBurn"
+                onChange={handleChange}
+                value={formData.energyBurn}
               />
             </Form.Group>
             <Form.Group as={Col} className="mb-3">
@@ -53,18 +138,34 @@ function GoalForm({ goalForm, handleGoalClose }) {
               <Form.Control
                 type="number"
                 name="distance"
-                // onChange={handleChange}
-                // value={formData.height || userData.height}
+                onChange={handleChange}
+                value={formData.distance}
               />
             </Form.Group>
-            <Form.Group as={Col} className="mb-3" controlId="duration">
-              <Form.Label>Duration</Form.Label>
-              <Form.Control
-                type="number"
-                name="distance"
-                onChange=""
-                value=""
-              />
+
+            <Form.Group as={Col} className="mb-3 d-flex flex-column">
+              <Form.Label>Duration Time</Form.Label>
+              <div className="d-flex">
+                <Form.Control
+                  type="number"
+                  min="0"
+                  max="10000"
+                  placeholder="Hour"
+                  className="mr-2"
+                  value={hour}
+                  onChange={handleChange}
+                  name="hour"
+                />
+                <Form.Control
+                  type="number"
+                  min="0"
+                  max="59"
+                  placeholder="Minute"
+                  value={minute}
+                  onChange={handleChange}
+                  name="minute"
+                />
+              </div>
             </Form.Group>
           </Row>
           <Modal.Footer>

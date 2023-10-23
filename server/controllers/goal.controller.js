@@ -3,7 +3,7 @@ import Goal from "../models/goal.model.js";
 import User from "../models/user.model.js";
 
 const createGoal = asyncHandler(async (req, res) => {
-  const { typeOfActivity, deadline, duration, energyBurn, distance, email } =
+  const { typeOfGoal, deadline, duration, energyBurn, distance, email } =
     req.body;
 
   const user = await User.findOne({ email });
@@ -11,11 +11,12 @@ const createGoal = asyncHandler(async (req, res) => {
 
   const newGoal = await Goal.create({
     userId: user._id,
-    typeOfActivity,
+    typeOfGoal,
     deadline,
     duration,
     energyBurn,
     distance,
+    status: null,
   });
 
   try {

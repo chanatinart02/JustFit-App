@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const GoalSchema = new mongoose.Schema({
   userId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-  typeOfActivity: {
+  typeOfGoal: {
     type: String,
     required: true,
   },
@@ -24,7 +24,6 @@ const GoalSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ["success", "failed"],
     default: null,
   },
 });

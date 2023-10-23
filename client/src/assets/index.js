@@ -13,6 +13,8 @@ import waist from "./img/waist.png";
 import yoga from "./img/yoga.png";
 import zumba from "./img/zumba.png";
 import bin from "./img/bin.png";
+import success from "./img/success.png";
+import fail from "./img/fail.png";
 
 export {
   content1,
@@ -30,4 +32,6 @@ export {
   yoga,
   zumba,
   bin,
+  success,
+  fail,
 };

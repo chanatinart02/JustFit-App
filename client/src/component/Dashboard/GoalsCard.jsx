@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 import { Card, Image, Button } from "react-bootstrap";
 
-import { bin, jogging } from "../../assets";
+import { bin, jogging, success, fail } from "../../assets";
 import GoalDelete from "./GoalDelete";
 
 function GoalsCard() {
   const [deleteShow, setDeleteShow] = useState(false);
+  const [status, setStatus] = useState(null);
 
   const handleDeleteClose = () => setDeleteShow(false);
   const handleDeleteShow = () => setDeleteShow(true);
@@ -40,12 +41,43 @@ function GoalsCard() {
               style={{ width: "36px", height: "36px" }}
               onClick={handleDeleteShow}
             />
-            <Button variant="success">Success</Button>
-            <Button variant="danger">Failure</Button>
+            {/* Status Goal */}
+            {status === null && (
+              <>
+                <Button variant="success" onClick={() => setStatus("success")}>
+                  Success
+                </Button>
+                <Button variant="danger" onClick={() => setStatus("failed")}>
+                  Failure
+                </Button>
+              </>
+            )}
+            {status === "success" && (
+              <Image
+                src={success}
+                roundedCircle
+                fluid
+                style={{
+                  width: "56px",
+                  height: "56px",
+                }}
+              />
+            )}
+            {status === "failed" && (
+              <Image
+                src={fail}
+                roundedCircle
+                fluid
+                style={{
+                  width: "56px",
+                  height: "56px",
+                }}
+              />
+            )}
           </div>
         </Card.Body>
       </Card>
-      // Modal
+
       <GoalDelete
         deleteShow={deleteShow}
         handleDeleteClose={handleDeleteClose}
