@@ -27,3 +27,7 @@ export function convertToHoursAndMinutes(duration) {
 
   return `${hoursText} ${minutesText}`.trim();
 }
+
+export function metersToKilometers(meters) {
+  return meters / 1000; // 1 kilometer = 1000 meters
+}

@@ -6,7 +6,10 @@ import dayjs from "dayjs";
 import { bin, jogging } from "../../assets";
 import EditActivity from "./EditActivity";
 import ActivityDelete from "./ActivityDelete";
-import { convertToHoursAndMinutes } from "../../Utils/activityUtils";
+import {
+  convertToHoursAndMinutes,
+  metersToKilometers,
+} from "../../Utils/activityUtils";
 import activities from "../../constants/activitiesType";
 import { useActivities } from "../../contexts/ActivityContext";
 
@@ -29,6 +32,7 @@ const ActivitiesCards = ({
   const activity = activities.find(
     (activity) => activity.name === typeOfActivity
   );
+  const formattedDistance = metersToKilometers(distance);
 
   const handleEditShow = () => {
     setEditShow(true);
@@ -67,7 +71,7 @@ const ActivitiesCards = ({
             <p className="fs-5 mb-0">{formattedDate}</p>
             <p className="fs-5 mb-0">{title}</p>
             <p className="fs-5 mb-0">Duration : {formattedDuration}</p>
-            <p className="fs-5 mb-0">Distance : {distance} km</p>
+            <p className="fs-5 mb-0">Distance : {formattedDistance} km</p>
             <p className="fs-5 mb-0">Energy burn : {energyBurn} Cal</p>
             <p className="fs-5 mb-0">{description}</p>
           </div>

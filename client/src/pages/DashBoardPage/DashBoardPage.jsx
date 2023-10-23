@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Container, Row, Col, Card, Image, Button } from "react-bootstrap";
-import { BiTimeFive, BiEdit } from "react-icons/bi";
+import { BiTimeFive } from "react-icons/bi";
 import { GiPathDistance } from "react-icons/gi";
 import axios from "axios";
 
@@ -9,6 +9,10 @@ import { burn, award, bin, jogging } from "../../assets";
 import "./Dashboard.css";
 import { useAuth } from "../../contexts/AuthContext";
 import { useActivities } from "../../contexts/ActivityContext";
+import {
+  convertToHoursAndMinutes,
+  metersToKilometers,
+} from "../../Utils/activityUtils";
 import {
   ProfileInfo,
   ActivityForm,
@@ -43,6 +47,22 @@ function DashBoardPage() {
     fetchActivities();
   }, [currentUser._id, token, activities]);
 
+  const totalDuration = activities.reduce(
+    (acc, activity) => acc + activity.duration,
+    0
+  );
+  const totalEnergyBurn = activities.reduce(
+    (acc, activity) => acc + activity.energyBurn,
+    0
+  );
+  const totalDistance = activities.reduce(
+    (acc, activity) => acc + activity.distance,
+    0
+  );
+
+  const formattedDuration = convertToHoursAndMinutes(totalDuration);
+  const formattedDistance = metersToKilometers(totalDistance);
+
   const handleAcClose = () => setActivityForm(false);
   const handleAcShow = () => setActivityForm(true);
   const handleGoalClose = () => setGoalForm(false);
@@ -70,7 +90,7 @@ function DashBoardPage() {
                     <Card.Title className=" text-light">Duration</Card.Title>
 
                     <Card.Text style={{ fontSize: "24px", color: "white" }}>
-                      1.30 Hours
+                      {formattedDuration}
                     </Card.Text>
                   </Card.Body>
                 </Card>
@@ -87,7 +107,7 @@ function DashBoardPage() {
                     />
                     <Card.Title className=" text-light">Energy burn</Card.Title>
                     <Card.Text style={{ fontSize: "24px", color: "white" }}>
-                      500 Cal
+                      {totalEnergyBurn} Cal
                     </Card.Text>
                   </Card.Body>
                 </Card>
@@ -104,7 +124,7 @@ function DashBoardPage() {
                     />
                     <Card.Title className=" text-light">Distance</Card.Title>
                     <Card.Text style={{ fontSize: "24px", color: "white" }}>
-                      8.37 Km.
+                      {formattedDistance} Km.
                     </Card.Text>
                   </Card.Body>
                 </Card>
