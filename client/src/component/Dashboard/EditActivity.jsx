@@ -8,7 +8,7 @@ import { useAuth } from "../../contexts/AuthContext";
 import { calculateTime, calculateEnergyBurn } from "../../Utils/activityUtils";
 
 const EditActivity = ({ editShow, handleEditClose }) => {
-  const { selectedActivity, setActivities } = useActivities();
+  const { selectedActivity } = useActivities();
   const { token } = useAuth();
   const [formData, setFormData] = useState({
     typeOfActivity: "",

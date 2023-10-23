@@ -5,10 +5,12 @@ import { GiPathDistance } from "react-icons/gi";
 import axios from "axios";
 
 import Layout from "../../component/Layout";
-import { burn, award, bin, jogging } from "../../assets";
+import { burn, award } from "../../assets";
 import "./Dashboard.css";
 import { useAuth } from "../../contexts/AuthContext";
 import { useActivities } from "../../contexts/ActivityContext";
+import { useGoal } from "../../contexts/GoalContext";
+
 import {
   convertToHoursAndMinutes,
   metersToKilometers,
@@ -24,28 +26,48 @@ import {
 function DashBoardPage() {
   const { currentUser, token } = useAuth();
   const { activities, setActivities } = useActivities();
+  const { goals, setGoals } = useGoal();
 
   const [activityForm, setActivityForm] = useState(false);
   const [goalForm, setGoalForm] = useState(false);
+  const [status, setStatus] = useState(null); // for goals status
+
+  const fetchActivities = async () => {
+    try {
+      const res = await axios.get(
+        `${import.meta.env.VITE_APP_API_URL}activities/${currentUser._id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      setActivities(res.data);
+    } catch (error) {
+      console.error("Error fetching activities data:", error);
+    }
+  };
+
+  const fetchGoals = async () => {
+    try {
+      const res = await axios.get(
+        `${import.meta.env.VITE_APP_API_URL}goals/${currentUser._id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      setGoals(res.data);
+    } catch (error) {
+      console.error("Error fetching goals data:", error);
+    }
+  };
 
   useEffect(() => {
-    const fetchActivities = async () => {
-      try {
-        const res = await axios.get(
-          `${import.meta.env.VITE_APP_API_URL}activities/${currentUser._id}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        setActivities(res.data);
-      } catch (error) {
-        console.error("Error fetching activities data:", error);
-      }
-    };
     fetchActivities();
-  }, [currentUser._id, token, activities]);
+    fetchGoals();
+  }, [activities, goals]);
 
   const totalDuration = activities.reduce(
     (acc, activity) => acc + activity.duration,
@@ -203,7 +225,19 @@ function DashBoardPage() {
                 </Button>
 
                 {/* Goals added */}
-                <GoalsCard />
+                {goals.map((goal) => (
+                  <GoalsCard
+                    key={goal._id}
+                    id={goal._id}
+                    typeOfGoal={goal.typeOfGoal}
+                    deadline={goal.deadline}
+                    duration={goal.duration}
+                    energyBurn={goal.energyBurn}
+                    distance={goal.distance}
+                    status={goal.status}
+                    setStatus={setStatus}
+                  />
+                ))}
               </Card.Body>
             </Card>
           </Col>

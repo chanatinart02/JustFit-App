@@ -3,14 +3,14 @@ import { Card, Image, Button } from "react-bootstrap";
 import { BiEdit } from "react-icons/bi";
 import dayjs from "dayjs";
 
-import { bin, jogging } from "../../assets";
+import { bin } from "../../assets";
 import EditActivity from "./EditActivity";
 import ActivityDelete from "./ActivityDelete";
 import {
   convertToHoursAndMinutes,
   metersToKilometers,
 } from "../../Utils/activityUtils";
-import activities from "../../constants/activitiesType";
+import activitiesType from "../../constants/activitiesType";
 import { useActivities } from "../../contexts/ActivityContext";
 
 const ActivitiesCards = ({
@@ -29,7 +29,9 @@ const ActivitiesCards = ({
 
   const formattedDate = dayjs(dateOfActivity).format("DD/MM/YYYY");
   const formattedDuration = convertToHoursAndMinutes(duration);
-  const activity = activities.find(
+
+  //
+  const activity = activitiesType.find(
     (activity) => activity.name === typeOfActivity
   );
   const formattedDistance = metersToKilometers(distance);

@@ -2,7 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App";
 import "./index.css";
-import dotenv from "dotenv";
+
 // component
 import WorkOut from "./pages/WorkOut/WorkOut";
 import Recipes from "./pages/Recipes/Recipes";
@@ -11,8 +11,11 @@ import LoginPage from "./pages/LoginPage/LoginPage";
 import SignUpPage from "./pages/SignUpPage/SignUpPage";
 import Recipe from "./pages/Recipes/Recipe-page";
 import ProfilePage from "./pages/Profile/ProfilePage";
+
+// Context
 import { AuthProvider } from "./contexts/AuthContext";
 import { ActivityProvider } from "./contexts/ActivityContext";
+import { GoalProvider } from "./contexts/GoalContext";
 
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
@@ -55,7 +58,9 @@ ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <AuthProvider>
       <ActivityProvider>
-        <RouterProvider router={router} />
+        <GoalProvider>
+          <RouterProvider router={router} />
+        </GoalProvider>
       </ActivityProvider>
     </AuthProvider>
   </React.StrictMode>

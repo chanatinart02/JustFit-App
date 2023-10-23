@@ -1,7 +1,22 @@
 import React from "react";
 import { Modal, Button } from "react-bootstrap";
+import axios from "axios";
 
-function GoalDelete({ deleteShow, handleDeleteClose }) {
+import { useAuth } from "../../contexts/AuthContext";
+
+function GoalDelete({ deleteShow, handleDeleteClose, id }) {
+  const { token } = useAuth();
+
+  const handleDelete = async (e) => {
+    e.preventDefault();
+    await axios.delete(`${import.meta.env.VITE_APP_API_URL}goals/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    handleDeleteClose();
+  };
+
   return (
     <Modal show={deleteShow} onHide={handleDeleteClose}>
       <Modal.Header closeButton>
@@ -17,7 +32,9 @@ function GoalDelete({ deleteShow, handleDeleteClose }) {
         <Button variant="secondary" onClick={handleDeleteClose}>
           Close
         </Button>
-        <Button variant="danger">Delete</Button>
+        <Button variant="danger" onClick={handleDelete}>
+          Delete
+        </Button>
       </Modal.Footer>
     </Modal>
   );

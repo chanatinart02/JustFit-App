@@ -1,12 +1,51 @@
 import React, { useState } from "react";
 import { Card, Image, Button } from "react-bootstrap";
+import axios from "axios";
+import dayjs from "dayjs";
 
-import { bin, jogging, success, fail } from "../../assets";
+import { bin, success, fail } from "../../assets";
 import GoalDelete from "./GoalDelete";
+import activitiesType from "../../constants/activitiesType";
+import { useAuth } from "../../contexts/AuthContext";
+import {
+  convertToHoursAndMinutes,
+  metersToKilometers,
+} from "../../Utils/activityUtils";
 
-function GoalsCard() {
+function GoalsCard({
+  id,
+  typeOfGoal,
+  deadline,
+  duration,
+  energyBurn,
+  distance,
+  status,
+  setStatus,
+}) {
+  const { token } = useAuth();
   const [deleteShow, setDeleteShow] = useState(false);
-  const [status, setStatus] = useState(null);
+
+  const updateStatus = async (newStatus) => {
+    try {
+      const res = await axios.put(
+        `${import.meta.env.VITE_APP_API_URL}goals/${id}`,
+        { status: newStatus },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      setStatus(newStatus);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const goal = activitiesType.find((activity) => activity.name === typeOfGoal);
+  const formattedDate = dayjs(deadline).format("DD/MM/YYYY");
+  const formattedDuration = convertToHoursAndMinutes(duration);
+  const formattedDistance = metersToKilometers(distance);
 
   const handleDeleteClose = () => setDeleteShow(false);
   const handleDeleteShow = () => setDeleteShow(true);
@@ -16,7 +55,7 @@ function GoalsCard() {
         <Card.Body className="d-flex text-light justify-content-between">
           <div className="d-flex flex-column justify-content-between">
             <Image
-              src={jogging}
+              src={goal.imageUrl}
               roundedCircle
               fluid
               style={{
@@ -29,10 +68,10 @@ function GoalsCard() {
           </div>
 
           <div className="goal-content">
-            <h6>Start 14/03/2023</h6>
-            <p className="fs-6 mb-0">Duration : 01:00 hrs</p>
-            <p className="fs-6 mb-0">Distance : 10 km</p>
-            <p className="fs-6 mb-0">Energy burn : ?? Cal</p>
+            <h6>Finish Date {formattedDate}</h6>
+            <p className="fs-6 mb-0">Duration : {formattedDuration}</p>
+            <p className="fs-6 mb-0">Distance : {formattedDistance}</p>
+            <p className="fs-6 mb-0">Energy burn : {energyBurn} Cal</p>
           </div>
           <div className="goal-complete d-flex flex-column align-items-center gap-3">
             <Image
@@ -44,10 +83,13 @@ function GoalsCard() {
             {/* Status Goal */}
             {status === null && (
               <>
-                <Button variant="success" onClick={() => setStatus("success")}>
+                <Button
+                  variant="success"
+                  onClick={() => updateStatus("success")}
+                >
                   Success
                 </Button>
-                <Button variant="danger" onClick={() => setStatus("failed")}>
+                <Button variant="danger" onClick={() => updateStatus("failed")}>
                   Failure
                 </Button>
               </>
@@ -81,6 +123,7 @@ function GoalsCard() {
       <GoalDelete
         deleteShow={deleteShow}
         handleDeleteClose={handleDeleteClose}
+        id={id}
       />
     </>
   );
