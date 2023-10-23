@@ -27,7 +27,7 @@ function GoalsCard({
 
   const updateStatus = async (newStatus) => {
     try {
-      const res = await axios.put(
+      await axios.put(
         `${import.meta.env.VITE_APP_API_URL}goals/${id}`,
         { status: newStatus },
         {
@@ -46,6 +46,7 @@ function GoalsCard({
   const formattedDate = dayjs(deadline).format("DD/MM/YYYY");
   const formattedDuration = convertToHoursAndMinutes(duration);
   const formattedDistance = metersToKilometers(distance);
+  const differenceInDays = dayjs(deadline).diff(dayjs(), "day");
 
   const handleDeleteClose = () => setDeleteShow(false);
   const handleDeleteShow = () => setDeleteShow(true);
@@ -64,7 +65,13 @@ function GoalsCard({
                 backgroundColor: "white",
               }}
             />
-            <p style={{ fontSize: "14px" }}>End in 6 day</p>
+            <p style={{ fontSize: "14px" }}>
+              {differenceInDays > 0
+                ? `Ends in ${differenceInDays} day${
+                    differenceInDays !== 1 ? "s" : ""
+                  }`
+                : "Ended"}
+            </p>
           </div>
 
           <div className="goal-content">

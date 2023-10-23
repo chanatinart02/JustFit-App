@@ -16,6 +16,7 @@ import ProfilePage from "./pages/Profile/ProfilePage";
 import { AuthProvider } from "./contexts/AuthContext";
 import { ActivityProvider } from "./contexts/ActivityContext";
 import { GoalProvider } from "./contexts/GoalContext";
+import PrivateRoute from "./Utils/PrivateRoute";
 
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
@@ -34,7 +35,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/dashBoard",
-    element: <DashBoardPage />,
+    element: <PrivateRoute component={DashBoardPage} />,
   },
   {
     path: "/login",
@@ -50,7 +51,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/profile",
-    element: <ProfilePage />,
+    element: <PrivateRoute component={ProfilePage} />,
   },
 ]);
 

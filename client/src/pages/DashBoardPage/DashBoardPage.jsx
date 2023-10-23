@@ -69,6 +69,7 @@ function DashBoardPage() {
     fetchGoals();
   }, [activities, goals]);
 
+  // Total cards
   const totalDuration = activities.reduce(
     (acc, activity) => acc + activity.duration,
     0
@@ -81,6 +82,7 @@ function DashBoardPage() {
     (acc, activity) => acc + activity.distance,
     0
   );
+  const totalGoals = goals.filter((goal) => goal.status === "success");
 
   const formattedDuration = convertToHoursAndMinutes(totalDuration);
   const formattedDistance = metersToKilometers(totalDistance);
@@ -163,7 +165,7 @@ function DashBoardPage() {
                     />
                     <Card.Title className=" text-light">Goal</Card.Title>
                     <Card.Text style={{ fontSize: "24px", color: "white" }}>
-                      3
+                      {totalGoals.length}
                     </Card.Text>
                   </Card.Body>
                 </Card>
