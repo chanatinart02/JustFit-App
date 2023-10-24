@@ -35,7 +35,11 @@ const router = createBrowserRouter([
   },
   {
     path: "/dashBoard",
-    element: <PrivateRoute component={DashBoardPage} />,
+    element: (
+      <PrivateRoute>
+        <DashBoardPage />
+      </PrivateRoute>
+    ),
   },
   {
     path: "/login",
@@ -51,7 +55,11 @@ const router = createBrowserRouter([
   },
   {
     path: "/profile",
-    element: <PrivateRoute component={ProfilePage} />,
+    element: (
+      <PrivateRoute>
+        <ProfilePage />
+      </PrivateRoute>
+    ),
   },
 ]);
 

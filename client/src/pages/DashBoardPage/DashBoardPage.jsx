@@ -32,22 +32,6 @@ function DashBoardPage() {
   const [goalForm, setGoalForm] = useState(false);
   const [status, setStatus] = useState(null); // for goals status
 
-  const fetchActivities = async () => {
-    try {
-      const res = await axios.get(
-        `${import.meta.env.VITE_APP_API_URL}activities/${currentUser._id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      setActivities(res.data);
-    } catch (error) {
-      console.error("Error fetching activities data:", error);
-    }
-  };
-
   const fetchGoals = async () => {
     try {
       const res = await axios.get(
@@ -64,10 +48,29 @@ function DashBoardPage() {
     }
   };
 
+  const fetchActivities = async () => {
+    try {
+      const res = await axios.get(
+        `${import.meta.env.VITE_APP_API_URL}activities/${currentUser._id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      setActivities(res.data);
+    } catch (error) {
+      console.error("Error fetching activities data:", error);
+    }
+  };
+
   useEffect(() => {
     fetchActivities();
+  }, [activities]);
+
+  useEffect(() => {
     fetchGoals();
-  }, [activities, goals]);
+  }, [goals]);
 
   // Total cards
   const totalDuration = activities.reduce(

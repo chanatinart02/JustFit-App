@@ -8,7 +8,6 @@ const PrivateRoute = ({ children }) => {
     return children;
   }
 
-  // Otherwise redirect to the login route
   return <Navigate to="/login" />;
 };
 
