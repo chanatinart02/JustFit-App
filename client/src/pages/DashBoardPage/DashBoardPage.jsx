@@ -22,6 +22,7 @@ import {
   GoalsCard,
   GoalForm,
 } from "../../component/Dashboard/index";
+import MyChart from "../../component/Chart";
 
 function DashBoardPage() {
   const { currentUser, token } = useAuth();
@@ -181,8 +182,8 @@ function DashBoardPage() {
         </Row>
 
         {/* Chart */}
-        <Row fluid>
-          <Col>Chart</Col>
+        <Row fluid className="d-flex justify-content-center">
+          <MyChart activities={activities} />
         </Row>
 
         {/* Activity */}
