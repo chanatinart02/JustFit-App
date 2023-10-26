@@ -62,7 +62,7 @@ const ActivitiesCards = ({
           <Image
             src={activity.imageUrl}
             roundedCircle
-            fluid
+            fluid="true"
             style={{
               width: "56px",
               height: "56px",

@@ -58,7 +58,7 @@ function GoalsCard({
             <Image
               src={goal.imageUrl}
               roundedCircle
-              fluid
+              fluid="true"
               style={{
                 width: "56px",
                 height: "56px",
@@ -105,7 +105,7 @@ function GoalsCard({
               <Image
                 src={success}
                 roundedCircle
-                fluid
+                fluid="true"
                 style={{
                   width: "56px",
                   height: "56px",
@@ -116,7 +116,7 @@ function GoalsCard({
               <Image
                 src={fail}
                 roundedCircle
-                fluid
+                fluid="true"
                 style={{
                   width: "56px",
                   height: "56px",

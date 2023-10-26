@@ -182,7 +182,7 @@ function DashBoardPage() {
         </Row>
 
         {/* Chart */}
-        <Row fluid className="d-flex justify-content-center">
+        <Row fluid="true" className="d-flex justify-content-center">
           <MyChart activities={activities} />
         </Row>
 

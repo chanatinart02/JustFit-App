@@ -15,7 +15,7 @@ const ProfileInfo = () => {
           <Image
             src={currentUser?.avatar || user2}
             roundedCircle
-            fluid
+            fluid="true"
             style={{ width: "180px", height: "180px" }}
           />
           <Card.Title className="m-3 fw-bold">

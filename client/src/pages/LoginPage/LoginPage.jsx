@@ -15,7 +15,7 @@ import { auth } from "../../services/firebase";
 import { useAuth } from "../../contexts/AuthContext";
 
 function LoginPage() {
-  const { setCurrentUser, setToken } = useAuth();
+  const { setCurrentUser, setToken, refreshIdToken } = useAuth();
   const provider = new GoogleAuthProvider();
   const navigate = useNavigate();
 
@@ -50,6 +50,9 @@ function LoginPage() {
       await postUserData(userData, token);
       setToken(token);
 
+      // After a successful login, trigger a token refresh
+      await refreshIdToken();
+
       setError("");
       navigate("/dashboard");
     } catch (error) {
@@ -76,6 +79,8 @@ function LoginPage() {
       // console.log(userData);
       await postUserData(userData, token);
       setToken(token);
+
+      await refreshToken();
       navigate("/dashboard");
     } catch (error) {
       console.error("Error logging in with Google:", error);

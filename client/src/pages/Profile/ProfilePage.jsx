@@ -39,14 +39,14 @@ const ProfilePage = () => {
   };
   return (
     <Layout>
-      <Container fluid>
+      <Container fluid="true">
         <h2 className="text-center mt-4">My Profile</h2>
         <section className="d-flex flex-column align-items-center">
           <h4>Current Photo</h4>
           <Image
             src={currentUser?.avatar || user2}
             roundedCircle
-            fluid
+            fluid="true"
             width="180px"
             height="180px"
           />
