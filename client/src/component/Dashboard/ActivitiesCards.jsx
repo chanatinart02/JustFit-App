@@ -57,7 +57,7 @@ const ActivitiesCards = ({
   };
   return (
     <>
-      <Card>
+      <Card className="mt-4">
         <Card.Body className="d-flex gap-3 text-light">
           <Image
             src={activity.imageUrl}

@@ -22,7 +22,6 @@ import {
   GoalsCard,
   GoalForm,
 } from "../../component/Dashboard/index";
-import MyChart from "../../component/Chart";
 
 function DashBoardPage() {
   const { currentUser, token } = useAuth();
@@ -181,11 +180,6 @@ function DashBoardPage() {
           </Col>
         </Row>
 
-        {/* Chart */}
-        <Row fluid="true" className="d-flex justify-content-center">
-          <MyChart activities={activities} />
-        </Row>
-
         {/* Activity */}
         <h5 className="mt-2 mb-0 justify-content-md-center">
           Activities Tracking
@@ -196,25 +190,26 @@ function DashBoardPage() {
               <Card.Header className="activity-header h5 p-3">
                 Activities Tracking
               </Card.Header>
-              <Card.Body className="d-flex justify-content-center gap-3 flex-column">
+              <Card.Body className="d-flex justify-content-center gap-3 flex-column ">
                 <Button className="activity-btn" onClick={handleAcShow}>
                   Create Activity
                 </Button>
-
-                {/* activities added */}
-                {activities.map((activity) => (
-                  <ActivitiesCards
-                    key={activity._id}
-                    id={activity._id}
-                    typeOfActivity={activity.typeOfActivity}
-                    title={activity.title}
-                    dateOfActivity={activity.dateOfActivity}
-                    duration={activity.duration}
-                    energyBurn={activity.energyBurn}
-                    distance={activity.distance}
-                    description={activity.description}
-                  />
-                ))}
+                <div className="overflow-scroll" style={{ height: "500px" }}>
+                  {/* activities added */}
+                  {activities.map((activity) => (
+                    <ActivitiesCards
+                      key={activity._id}
+                      id={activity._id}
+                      typeOfActivity={activity.typeOfActivity}
+                      title={activity.title}
+                      dateOfActivity={activity.dateOfActivity}
+                      duration={activity.duration}
+                      energyBurn={activity.energyBurn}
+                      distance={activity.distance}
+                      description={activity.description}
+                    />
+                  ))}
+                </div>
               </Card.Body>
             </Card>
           </Col>
@@ -231,19 +226,21 @@ function DashBoardPage() {
                 </Button>
 
                 {/* Goals added */}
-                {goals.map((goal) => (
-                  <GoalsCard
-                    key={goal._id}
-                    id={goal._id}
-                    typeOfGoal={goal.typeOfGoal}
-                    deadline={goal.deadline}
-                    duration={goal.duration}
-                    energyBurn={goal.energyBurn}
-                    distance={goal.distance}
-                    status={goal.status}
-                    setStatus={setStatus}
-                  />
-                ))}
+                <div className="overflow-scroll" style={{ height: "500px" }}>
+                  {goals.map((goal) => (
+                    <GoalsCard
+                      key={goal._id}
+                      id={goal._id}
+                      typeOfGoal={goal.typeOfGoal}
+                      deadline={goal.deadline}
+                      duration={goal.duration}
+                      energyBurn={goal.energyBurn}
+                      distance={goal.distance}
+                      status={goal.status}
+                      setStatus={setStatus}
+                    />
+                  ))}
+                </div>
               </Card.Body>
             </Card>
           </Col>

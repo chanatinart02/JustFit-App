@@ -52,7 +52,7 @@ function GoalsCard({
   const handleDeleteShow = () => setDeleteShow(true);
   return (
     <>
-      <Card>
+      <Card className="mt-4">
         <Card.Body className="d-flex text-light justify-content-between">
           <div className="d-flex flex-column justify-content-between">
             <Image
