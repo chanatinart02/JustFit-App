@@ -43,8 +43,11 @@ const Header = () => {
               {currentUser ? (
                 <div className="user">
                   <Image
-                    width="56px"
-                    height="56px"
+                    style={{
+                      height: "56px",
+                      width: "56px",
+                      objectFit: "cover",
+                    }}
                     src={currentUser.avatar || user2}
                     roundedCircle
                     fluid="true"

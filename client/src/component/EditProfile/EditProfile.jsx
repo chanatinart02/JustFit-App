@@ -4,16 +4,18 @@ import axios from "axios";
 
 import genderTypes from "../../constants/genderType";
 import { useAuth } from "../../contexts/AuthContext";
+import upload from "../../Utils/upload";
 
 const EditProfile = ({ closeModal, modalShow }) => {
   const { currentUser, token, setCurrentUser } = useAuth();
-  // const [avatar, setAvatar] = useState({ name: "", url: "" });
+  const [file, setFile] = useState(null);
   const [formData, setFormData] = useState({
     name: "",
     age: "",
     gender: "",
     height: "",
     weight: "",
+    avatar: "",
   });
 
   const handleChange = (e) => {
@@ -54,10 +56,12 @@ const EditProfile = ({ closeModal, modalShow }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    const url = await upload(file);
+
     try {
       const res = await axios.patch(
         `${import.meta.env.VITE_APP_API_URL}users/${currentUser._id}`,
-        formData,
+        { ...formData, avatar: url },
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -148,10 +152,15 @@ const EditProfile = ({ closeModal, modalShow }) => {
             value={formData.weight || currentUser.weight}
           />
 
-          {/* <Form.Group controlId="formFile" className="mb-3">
+          <Form.Group controlId="formFile" className="mb-3">
             <Form.Label>Profile photo</Form.Label>
-            <Form.Control accept="image/*" type="file" name="avatar" />
-          </Form.Group> */}
+            <Form.Control
+              accept="image/*"
+              type="file"
+              name="avatar"
+              onChange={(e) => setFile(e.target.files[0])}
+            />
+          </Form.Group>
 
           <Modal.Footer>
             <Button type="submit" className="edit-btn-color">

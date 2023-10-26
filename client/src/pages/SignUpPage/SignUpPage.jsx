@@ -13,7 +13,7 @@ import { auth } from "../../services/firebase";
 import { useAuth } from "../../contexts/AuthContext";
 
 function SignUpPage() {
-  const { setCurrentUser, setToken } = useAuth();
+  const { setCurrentUser, setToken, refreshIdToken } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -73,6 +73,7 @@ function SignUpPage() {
 
       await postUserData(userData, token);
       setToken(token);
+      refreshIdToken();
       navigate("/dashboard");
     } catch (error) {
       console.error("Error logging in with Google:", error);

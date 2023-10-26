@@ -43,13 +43,14 @@ const ProfilePage = () => {
         <h2 className="text-center mt-4">My Profile</h2>
         <section className="d-flex flex-column align-items-center">
           <h4>Current Photo</h4>
+
           <Image
             src={currentUser?.avatar || user2}
             roundedCircle
             fluid="true"
-            width="180px"
-            height="180px"
+            style={{ height: "180px", width: "180px", objectFit: "cover" }}
           />
+
           <div className="user-info mt-4">
             <div className="col-sm-3 d-flex gap-3">
               <p className="info">Name</p>

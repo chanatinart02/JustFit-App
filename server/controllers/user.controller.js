@@ -1,13 +1,13 @@
 import User from "../models/user.model.js";
 import asyncHandler from "express-async-handler";
-import { v2 as cloudinary } from "cloudinary";
 import "dotenv/config";
+// import { v2 as cloudinary } from "cloudinary";
 
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-});
+// cloudinary.config({
+//   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+//   api_key: process.env.CLOUDINARY_API_KEY,
+//   api_secret: process.env.CLOUDINARY_API_SECRET,
+// });
 
 const createUser = asyncHandler(async (req, res) => {
   const { name, email, avatar, uid } = req.body;
@@ -41,11 +41,11 @@ const getUserInfoByID = asyncHandler(async (req, res) => {
 
 const updatesUser = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  const { name, gender, age, height, weight } = req.body;
+  const { name, gender, age, height, weight, avatar } = req.body;
 
   const updateUser = await User.findOneAndUpdate(
     { _id: id },
-    { name, gender, age, height, weight },
+    { name, gender, age, height, weight, avatar },
     {
       new: true,
     }

@@ -6,7 +6,7 @@ import {
   signInWithPopup,
   signInWithEmailAndPassword,
 } from "firebase/auth";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
@@ -80,7 +80,7 @@ function LoginPage() {
       await postUserData(userData, token);
       setToken(token);
 
-      await refreshToken();
+      await refreshIdToken();
       navigate("/dashboard");
     } catch (error) {
       console.error("Error logging in with Google:", error);
