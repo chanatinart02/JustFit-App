@@ -195,20 +195,22 @@ function DashBoardPage() {
                   Create Activity
                 </Button>
                 <div className="overflow-scroll" style={{ height: "500px" }}>
-                  {/* activities added */}
-                  {activities.map((activity) => (
-                    <ActivitiesCards
-                      key={activity._id}
-                      id={activity._id}
-                      typeOfActivity={activity.typeOfActivity}
-                      title={activity.title}
-                      dateOfActivity={activity.dateOfActivity}
-                      duration={activity.duration}
-                      energyBurn={activity.energyBurn}
-                      distance={activity.distance}
-                      description={activity.description}
-                    />
-                  ))}
+                  <div className="d-flex flex-column-reverse">
+                    {/* activities added */}
+                    {activities.map((activity) => (
+                      <ActivitiesCards
+                        key={activity._id}
+                        id={activity._id}
+                        typeOfActivity={activity.typeOfActivity}
+                        title={activity.title}
+                        dateOfActivity={activity.dateOfActivity}
+                        duration={activity.duration}
+                        energyBurn={activity.energyBurn}
+                        distance={activity.distance}
+                        description={activity.description}
+                      />
+                    ))}
+                  </div>
                 </div>
               </Card.Body>
             </Card>
@@ -227,19 +229,21 @@ function DashBoardPage() {
 
                 {/* Goals added */}
                 <div className="overflow-scroll" style={{ height: "500px" }}>
-                  {goals.map((goal) => (
-                    <GoalsCard
-                      key={goal._id}
-                      id={goal._id}
-                      typeOfGoal={goal.typeOfGoal}
-                      deadline={goal.deadline}
-                      duration={goal.duration}
-                      energyBurn={goal.energyBurn}
-                      distance={goal.distance}
-                      status={goal.status}
-                      setStatus={setStatus}
-                    />
-                  ))}
+                  <div className="d-flex flex-column-reverse">
+                    {goals.map((goal) => (
+                      <GoalsCard
+                        key={goal._id}
+                        id={goal._id}
+                        typeOfGoal={goal.typeOfGoal}
+                        deadline={goal.deadline}
+                        duration={goal.duration}
+                        energyBurn={goal.energyBurn}
+                        distance={goal.distance}
+                        status={goal.status}
+                        setStatus={setStatus}
+                      />
+                    ))}
+                  </div>
                 </div>
               </Card.Body>
             </Card>

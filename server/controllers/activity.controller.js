@@ -38,6 +38,7 @@ const createActivity = asyncHandler(async (req, res) => {
 const getAllActivities = asyncHandler(async (req, res) => {
   const { id } = req.params;
   const activities = await Activity.find({ userId: id });
+
   if (activities) {
     res.status(200).json(activities);
   } else {
