@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { Container, Row, Col, Card, Image, Button } from "react-bootstrap";
 import { BiTimeFive } from "react-icons/bi";
 import { GiPathDistance } from "react-icons/gi";
@@ -15,6 +15,8 @@ import {
   convertToHoursAndMinutes,
   metersToKilometers,
 } from "../../Utils/activityUtils";
+import { fetchActivitiesApi } from "../../services/activityService";
+import { fetchGoalsApi } from "../../services/goalService";
 import {
   ProfileInfo,
   ActivityForm,
@@ -25,65 +27,65 @@ import {
 
 function DashBoardPage() {
   const { currentUser, token } = useAuth();
-  const { activities, setActivities } = useActivities();
-  const { goals, setGoals } = useGoal();
+  const { activities, setActivities, loading, setLoading } = useActivities();
+  const { goals, setGoals, loadingGoals, setLoadingGoals } = useGoal();
 
   const [activityForm, setActivityForm] = useState(false);
   const [goalForm, setGoalForm] = useState(false);
   const [status, setStatus] = useState(null); // for goals status
+  const [error, setError] = useState(null);
+
+  const fetchActivities = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await fetchActivitiesApi(currentUser._id, token);
+      if (response) {
+        setActivities(response);
+      }
+    } catch (error) {
+      setError("Failed to fetch activities.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const fetchGoals = async () => {
+    setLoadingGoals(true);
     try {
-      const res = await axios.get(
-        `${import.meta.env.VITE_APP_API_URL}goals/${currentUser._id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      setGoals(res.data);
+      const response = await fetchGoalsApi(currentUser._id, token);
+
+      if (response) {
+        setGoals(response);
+        setLoadingGoals(false);
+      }
     } catch (error) {
       console.error("Error fetching goals data:", error);
     }
   };
 
-  const fetchActivities = async () => {
-    try {
-      const res = await axios.get(
-        `${import.meta.env.VITE_APP_API_URL}activities/${currentUser._id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      setActivities(res.data);
-    } catch (error) {
-      console.error("Error fetching activities data:", error);
+  useEffect(() => {
+    if (currentUser) {
+      fetchActivities();
+      fetchGoals();
     }
-  };
-
-  useEffect(() => {
-    fetchActivities();
-  }, [activities]);
-
-  useEffect(() => {
-    fetchGoals();
-  }, [goals]);
+    return () => {
+      setLoading(false);
+    };
+  }, [currentUser]);
 
   // Total cards
-  const totalDuration = activities.reduce(
-    (acc, activity) => acc + activity.duration,
-    0
+  const totalDuration = useMemo(
+    () => activities.reduce((acc, activity) => acc + activity.duration, 0),
+    [activities]
   );
-  const totalEnergyBurn = activities.reduce(
-    (acc, activity) => acc + activity.energyBurn,
-    0
+  const totalEnergyBurn = useMemo(
+    () => activities.reduce((acc, activity) => acc + activity.energyBurn, 0),
+    [activities]
   );
-  const totalDistance = activities.reduce(
-    (acc, activity) => acc + activity.distance,
-    0
+  const totalDistance = useMemo(
+    () => activities.reduce((acc, activity) => acc + activity.distance, 0),
+    [activities]
   );
   const totalGoals = goals.filter((goal) => goal.status === "success");
 
@@ -195,22 +197,21 @@ function DashBoardPage() {
                   Create Activity
                 </Button>
                 <div className="overflow-scroll" style={{ height: "500px" }}>
-                  <div className="d-flex flex-column-reverse">
-                    {/* activities added */}
-                    {activities.map((activity) => (
-                      <ActivitiesCards
-                        key={activity._id}
-                        id={activity._id}
-                        typeOfActivity={activity.typeOfActivity}
-                        title={activity.title}
-                        dateOfActivity={activity.dateOfActivity}
-                        duration={activity.duration}
-                        energyBurn={activity.energyBurn}
-                        distance={activity.distance}
-                        description={activity.description}
-                      />
-                    ))}
-                  </div>
+                  {/* activities added */}
+                  {loading ? <h1 className="text-center">Loading...</h1> : null}
+                  {activities.map((activity) => (
+                    <ActivitiesCards
+                      key={activity._id}
+                      id={activity._id}
+                      typeOfActivity={activity.typeOfActivity}
+                      title={activity.title}
+                      dateOfActivity={activity.dateOfActivity}
+                      duration={activity.duration}
+                      energyBurn={activity.energyBurn}
+                      distance={activity.distance}
+                      description={activity.description}
+                    />
+                  ))}
                 </div>
               </Card.Body>
             </Card>
@@ -228,22 +229,23 @@ function DashBoardPage() {
                 </Button>
 
                 {/* Goals added */}
+                {loadingGoals ? (
+                  <h1 className="text-center">Loading...</h1>
+                ) : null}
                 <div className="overflow-scroll" style={{ height: "500px" }}>
-                  <div className="d-flex flex-column-reverse">
-                    {goals.map((goal) => (
-                      <GoalsCard
-                        key={goal._id}
-                        id={goal._id}
-                        typeOfGoal={goal.typeOfGoal}
-                        deadline={goal.deadline}
-                        duration={goal.duration}
-                        energyBurn={goal.energyBurn}
-                        distance={goal.distance}
-                        status={goal.status}
-                        setStatus={setStatus}
-                      />
-                    ))}
-                  </div>
+                  {goals.map((goal) => (
+                    <GoalsCard
+                      key={goal._id}
+                      id={goal._id}
+                      typeOfGoal={goal.typeOfGoal}
+                      deadline={goal.deadline}
+                      duration={goal.duration}
+                      energyBurn={goal.energyBurn}
+                      distance={goal.distance}
+                      status={goal.status}
+                      setStatus={setStatus}
+                    />
+                  ))}
                 </div>
               </Card.Body>
             </Card>

@@ -29,7 +29,7 @@ const createGoal = asyncHandler(async (req, res) => {
 
 const getGoals = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  const goals = await Goal.find({ userId: id });
+  const goals = await Goal.find({ userId: id }).sort({ deadline: -1 });
 
   // Check deadlines and update status
   const now = new Date();

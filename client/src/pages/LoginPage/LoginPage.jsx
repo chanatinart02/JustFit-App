@@ -1,22 +1,16 @@
 import React from "react";
 import Layout from "../../component/Layout";
 import Helmet from "react-helmet";
-import {
-  GoogleAuthProvider,
-  signInWithPopup,
-  signInWithEmailAndPassword,
-} from "firebase/auth";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 
 import "./LoginPage.css";
-import { auth } from "../../services/firebase";
+
+import { handleLogin, handleGoogleAuth } from "../../services/authService";
 import { useAuth } from "../../contexts/AuthContext";
 
 function LoginPage() {
   const { setCurrentUser, setToken, refreshIdToken } = useAuth();
-  const provider = new GoogleAuthProvider();
   const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
@@ -24,86 +18,32 @@ function LoginPage() {
   const [error, setError] = useState("");
 
   // Function to handle login with email and password
-  const handleLogin = async (e) => {
+  const handleEmailLogin = async (e) => {
     e.preventDefault();
 
     try {
-      const userCredential = await signInWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
-      // Get the user information
-      const user = userCredential.user;
-
-      // Prepare user data for DB
-      const userData = {
-        name: user.displayName,
-        email: user.email,
-        avatar: user.photoURL,
-        uid: user.uid,
-      };
-
-      const token = await user.getIdToken();
-
-      // Send user data to the server
-      await postUserData(userData, token);
+      const { res, token } = await handleLogin(email, password);
       setToken(token);
-
-      // After a successful login, trigger a token refresh
       await refreshIdToken();
-
+      setCurrentUser(res);
       setError("");
       navigate("/dashboard");
     } catch (error) {
-      const errorCode = error.code;
-      const errorMessage = error.message;
-      console.log(errorCode, errorMessage);
+      console.log(error.code, error.message);
       setError("E-mail or Password Invalid");
     }
   };
 
-  const handleGoogleAuth = async () => {
+  // Function to handle login with Google
+  const handleGoogleSignIn = async () => {
     try {
-      const result = await signInWithPopup(auth, provider);
-      const credential = await GoogleAuthProvider.credentialFromResult(result);
-      const user = result.user;
-      const token = await user.getIdToken();
-
-      const userData = {
-        name: user.displayName,
-        email: user.email,
-        avatar: user.photoURL,
-        uid: user.uid,
-      };
-      // console.log(userData);
-      await postUserData(userData, token);
+      const { res, token } = await handleGoogleAuth();
       setToken(token);
-
       await refreshIdToken();
+      setCurrentUser(res);
       navigate("/dashboard");
     } catch (error) {
       console.error("Error logging in with Google:", error);
-    }
-  };
-
-  // Function to post user data to the server
-  const postUserData = async (userData, idToken) => {
-    try {
-      const res = await axios.post(
-        `${import.meta.env.VITE_APP_API_URL}users`,
-        userData,
-        {
-          headers: {
-            Authorization: `Bearer ${idToken}`,
-          },
-        }
-      );
-
-      // Store current user data in context
-      setCurrentUser(res.data);
-    } catch (error) {
-      console.error("Error posting user data:", error);
     }
   };
 
@@ -159,7 +99,7 @@ function LoginPage() {
           <button
             className="w-100 btn btn-lg login-btn mb-4"
             type="submit"
-            onClick={handleLogin}
+            onClick={handleEmailLogin}
           >
             Log in
           </button>
@@ -167,7 +107,7 @@ function LoginPage() {
           <button
             type="button"
             className="login-with-google-btn m-auto "
-            onClick={handleGoogleAuth}
+            onClick={handleGoogleSignIn}
           >
             Continue with Google
           </button>

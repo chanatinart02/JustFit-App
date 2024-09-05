@@ -37,7 +37,9 @@ const createActivity = asyncHandler(async (req, res) => {
 
 const getAllActivities = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  const activities = await Activity.find({ userId: id });
+  const activities = await Activity.find({ userId: id }).sort({
+    dateOfActivity: -1,
+  });
 
   if (activities) {
     res.status(200).json(activities);

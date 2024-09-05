@@ -7,6 +7,7 @@ export const useActivities = () => useContext(ActivityContext);
 export const ActivityProvider = ({ children }) => {
   const [activities, setActivities] = useState([]);
   const [selectedActivity, setSelectedActivity] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   return (
     <ActivityContext.Provider
@@ -15,6 +16,8 @@ export const ActivityProvider = ({ children }) => {
         setActivities,
         selectedActivity,
         setSelectedActivity,
+        loading,
+        setLoading,
       }}
     >
       {children}

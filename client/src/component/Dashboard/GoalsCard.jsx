@@ -1,12 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import { Card, Image, Button } from "react-bootstrap";
-import axios from "axios";
 import dayjs from "dayjs";
 
 import { bin, success, fail } from "../../assets";
 import GoalDelete from "./GoalDelete";
 import activitiesType from "../../constants/activitiesType";
 import { useAuth } from "../../contexts/AuthContext";
+import { updateGoalStatusApi, fetchGoalsApi } from "../../services/goalService";
+import { useGoal } from "../../contexts/GoalContext";
 import {
   convertToHoursAndMinutes,
   metersToKilometers,
@@ -22,25 +23,27 @@ function GoalsCard({
   status,
   setStatus,
 }) {
-  const { token } = useAuth();
+  const { token, currentUser } = useAuth();
+  const { setGoals } = useGoal();
   const [deleteShow, setDeleteShow] = useState(false);
 
-  const updateStatus = async (newStatus) => {
-    try {
-      await axios.put(
-        `${import.meta.env.VITE_APP_API_URL}goals/${id}`,
-        { status: newStatus },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+  const updateStatus = useCallback(
+    async (newStatus) => {
+      try {
+        await updateGoalStatusApi(id, newStatus, token);
+        setStatus(newStatus);
+
+        const updatedGoals = await fetchGoalsApi(currentUser._id, token);
+        if (updatedGoals) {
+          setGoals(updatedGoals);
         }
-      );
-      setStatus(newStatus);
-    } catch (error) {
-      console.error(error);
-    }
-  };
+      } catch (error) {
+        console.error(error);
+        alert("Failed to update status. Please try again.");
+      }
+    },
+    [id, token]
+  );
 
   const goal = activitiesType.find((activity) => activity.name === typeOfGoal);
   const formattedDate = dayjs(deadline).format("DD/MM/YYYY");
@@ -93,10 +96,15 @@ function GoalsCard({
                 <Button
                   variant="success"
                   onClick={() => updateStatus("success")}
+                  aria-label="Mark goal as success"
                 >
                   Success
                 </Button>
-                <Button variant="danger" onClick={() => updateStatus("failed")}>
+                <Button
+                  variant="danger"
+                  onClick={() => updateStatus("failed")}
+                  aria-label="Mark goal as failed"
+                >
                   Failure
                 </Button>
               </>

@@ -7,10 +7,10 @@ import {
   createUserWithEmailAndPassword,
 } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 
 import { auth } from "../../services/firebase";
 import { useAuth } from "../../contexts/AuthContext";
+import { postUserData } from "../../services/authService";
 
 function SignUpPage() {
   const { setCurrentUser, setToken, refreshIdToken } = useAuth();
@@ -30,25 +30,25 @@ function SignUpPage() {
     }
 
     try {
-      await createUserWithEmailAndPassword(auth, email, password).then(
-        async (userCredential) => {
-          const user = userCredential.user;
-          console.log(user);
-
-          const userData = {
-            name: user.displayName,
-            email: user.email,
-            avatar: user.photoURL,
-          };
-          // Get the token after registration
-          const token = await user.getIdToken();
-
-          postUserData(userData, token);
-          setError("");
-
-          navigate("/login");
-        }
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
       );
+      const user = userCredential.user;
+      const token = await user.getIdToken();
+
+      const userData = {
+        name: user.displayName,
+        email: user.email,
+        avatar: user.photoURL,
+      };
+
+      const response = await postUserData(userData, token);
+      setCurrentUser(response);
+      setToken(token);
+      setError("");
+      navigate("/login");
     } catch (error) {
       const errorCode = error.code;
       const errorMessage = error.message;
@@ -71,32 +71,13 @@ function SignUpPage() {
         uid: user.uid,
       };
 
-      await postUserData(userData, token);
+      const response = await postUserData(userData, token);
+      setCurrentUser(response);
       setToken(token);
       refreshIdToken();
       navigate("/dashboard");
     } catch (error) {
       console.error("Error logging in with Google:", error);
-    }
-  };
-
-  // Function to post user data to the server
-  const postUserData = async (userData, idToken) => {
-    try {
-      const res = await axios.post(
-        `${import.meta.env.VITE_APP_API_URL}users`,
-        userData,
-        {
-          headers: {
-            Authorization: `Bearer ${idToken}`,
-          },
-        }
-      );
-
-      // Store current user data in context
-      setCurrentUser(res.data);
-    } catch (error) {
-      console.error("Error posting user data:", error);
     }
   };
 

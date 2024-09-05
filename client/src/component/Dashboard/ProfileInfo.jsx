@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Container, Card, Image } from "react-bootstrap";
-import axios from "axios";
 
 import { user2 } from "../../assets";
 import { useAuth } from "../../contexts/AuthContext";

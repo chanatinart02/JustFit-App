@@ -31,3 +31,18 @@ export function convertToHoursAndMinutes(duration) {
 export function metersToKilometers(meters) {
   return meters / 1000; // 1 kilometer = 1000 meters
 }
+
+export const resetForm = (setFormData, setHour, setMinute, email) => {
+  setFormData({
+    typeOfActivity: "",
+    title: "",
+    dateOfActivity: "",
+    duration: 0,
+    energyBurn: 0,
+    distance: 0,
+    description: "",
+    email,
+  });
+  setHour("");
+  setMinute("");
+};

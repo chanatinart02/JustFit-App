@@ -1,13 +1,15 @@
 import React, { useState } from "react";
 import { Modal, Button, Form, Row, Col } from "react-bootstrap";
-import axios from "axios";
 
 import activitiesType from "../../constants/activitiesType";
 import { useAuth } from "../../contexts/AuthContext";
-import { calculateTime } from "../../Utils/activityUtils";
+import { useGoal } from "../../contexts/GoalContext";
+import { calculateTime, resetForm } from "../../Utils/activityUtils";
+import { createGoal, fetchGoalsApi } from "../../services/goalService";
 
 function GoalForm({ goalForm, handleGoalClose }) {
   const { currentUser, token } = useAuth();
+  const { setGoals } = useGoal();
   const [formData, setFormData] = useState({
     typeOfGoal: "",
     deadline: "",
@@ -43,26 +45,15 @@ function GoalForm({ goalForm, handleGoalClose }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      setFormData({
-        ...formData,
-      });
+      await createGoal(formData, token);
 
-      await axios.post(`${import.meta.env.VITE_APP_API_URL}goals/`, formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      // Fetch updated goals after creation
+      const updateGoals = await fetchGoalsApi(currentUser._id, token);
+      if (updateGoals) {
+        setGoals(updateGoals);
+      }
 
-      // clear
-      setFormData({
-        typeOfGoal: "",
-        deadline: "",
-        energyBurn: 0,
-        distance: 0,
-        email: currentUser.email,
-      });
-      setHour(null);
-      setMinute(null);
+      resetForm(setFormData, setHour, setMinute, currentUser.email);
       handleGoalClose();
     } catch (error) {
       console.error("Error creating goal:", error);

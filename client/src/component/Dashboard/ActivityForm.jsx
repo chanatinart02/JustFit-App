@@ -1,15 +1,22 @@
 import React, { useEffect, useState } from "react";
 import { Modal, Button, Form, Row, Col } from "react-bootstrap";
-import axios from "axios";
 
 import activitiesType from "../../constants/activitiesType";
 import { useAuth } from "../../contexts/AuthContext";
 import { useActivities } from "../../contexts/ActivityContext";
-import { calculateTime, calculateEnergyBurn } from "../../Utils/activityUtils";
+import {
+  calculateTime,
+  calculateEnergyBurn,
+  resetForm,
+} from "../../Utils/activityUtils";
+import {
+  createActivity,
+  fetchActivitiesApi,
+} from "../../services/activityService";
 
 const ActivityForm = ({ activityForm, handleAcClose }) => {
   const { currentUser, token } = useAuth();
-  const { activities, setActivities } = useActivities();
+  const { setActivities } = useActivities();
   const [formData, setFormData] = useState({
     typeOfActivity: "",
     title: "",
@@ -23,8 +30,13 @@ const ActivityForm = ({ activityForm, handleAcClose }) => {
   const [hour, setHour] = useState(0);
   const [minute, setMinute] = useState(0);
 
+  useEffect(() => {
+    if (!activityForm) {
+      resetForm(setFormData, setHour, setMinute, currentUser.email);
+    }
+  }, [activityForm]);
+
   const handleChange = (e) => {
-    // Destructuring the event object to get the name and value
     const { name, value } = e.target;
 
     if (name === "hour") {
@@ -51,33 +63,17 @@ const ActivityForm = ({ activityForm, handleAcClose }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      setFormData({
-        ...formData,
-      });
+      await createActivity(formData, token);
 
-      // Send form data to server
-      await axios.post(
-        `${import.meta.env.VITE_APP_API_URL}activities/`,
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+      const updatedActivities = await fetchActivitiesApi(
+        currentUser._id,
+        token
       );
 
-      // clear
-      setFormData({
-        typeOfActivity: "",
-        title: "",
-        dateOfActivity: "",
-        energyBurn: 0,
-        distance: 0,
-        description: "",
-        email: currentUser.email,
-      });
-      setHour(null);
-      setMinute(null);
+      if (updatedActivities) {
+        setActivities(updatedActivities);
+      }
+      resetForm(setFormData, setHour, setMinute, currentUser.email);
       handleAcClose();
     } catch (error) {
       console.error("Error creating activity:", error);

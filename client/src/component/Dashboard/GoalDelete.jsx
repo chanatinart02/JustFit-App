@@ -1,19 +1,23 @@
 import React from "react";
 import { Modal, Button } from "react-bootstrap";
-import axios from "axios";
 
 import { useAuth } from "../../contexts/AuthContext";
+import { deleteGoalApi, fetchGoalsApi } from "../../services/goalService";
+import { useGoal } from "../../contexts/GoalContext";
 
 function GoalDelete({ deleteShow, handleDeleteClose, id }) {
-  const { token } = useAuth();
+  const { currentUser, token } = useAuth();
+  const { setGoals } = useGoal();
 
   const handleDelete = async (e) => {
     e.preventDefault();
-    await axios.delete(`${import.meta.env.VITE_APP_API_URL}goals/${id}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    await deleteGoalApi(id, token);
+
+    const updatedGoals = await fetchGoalsApi(currentUser._id, token);
+
+    if (updatedGoals) {
+      setGoals(updatedGoals);
+    }
     handleDeleteClose();
   };
 

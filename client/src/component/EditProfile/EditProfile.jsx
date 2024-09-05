@@ -10,12 +10,13 @@ const EditProfile = ({ closeModal, modalShow }) => {
   const { currentUser, token, setCurrentUser } = useAuth();
   const [file, setFile] = useState(null);
   const [formData, setFormData] = useState({
-    name: "",
-    age: "",
-    gender: "",
-    height: "",
-    weight: "",
-    avatar: "",
+    name: currentUser?.name || "",
+    age: currentUser?.age || "",
+    gender: currentUser?.gender || "",
+    height: currentUser?.height || "",
+    weight: currentUser?.weight || "",
+    avatar: currentUser?.avatar || "",
+    dateOfBirth: "",
   });
 
   const handleChange = (e) => {
@@ -26,7 +27,7 @@ const EditProfile = ({ closeModal, modalShow }) => {
       setFormData({
         ...formData,
         age: age,
-        [name]: value,
+        dateOfBirth: value,
       });
     } else {
       setFormData({
@@ -56,7 +57,11 @@ const EditProfile = ({ closeModal, modalShow }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const url = await upload(file);
+    let url = formData.avatar; // Default to existing URL if no new file
+
+    if (file) {
+      url = await upload(file);
+    }
 
     try {
       const res = await axios.patch(

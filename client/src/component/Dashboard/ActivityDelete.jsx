@@ -1,23 +1,24 @@
 import React from "react";
 import { Modal, Button } from "react-bootstrap";
-import axios from "axios";
 
 import { useAuth } from "../../contexts/AuthContext";
 import { useActivities } from "../../contexts/ActivityContext";
+import {
+  deleteActivity,
+  fetchActivitiesApi,
+} from "../../services/activityService";
 
 const ActivityDelete = ({ deleteShow, handleDeleteClose }) => {
-  const { token } = useAuth();
-  const { selectedActivity } = useActivities();
+  const { currentUser, token } = useAuth();
+  const { selectedActivity, setActivities } = useActivities();
   const handleDelete = async (e) => {
     e.preventDefault();
-    await axios.delete(
-      `${import.meta.env.VITE_APP_API_URL}activities/${selectedActivity.id}`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+    await deleteActivity(selectedActivity.id, token);
+
+    const updatedActivities = await fetchActivitiesApi(currentUser._id, token);
+    if (updatedActivities) {
+      setActivities(updatedActivities);
+    }
     handleDeleteClose();
   };
 

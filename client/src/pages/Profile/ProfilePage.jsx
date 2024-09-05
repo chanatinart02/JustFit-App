@@ -14,6 +14,7 @@ const ProfilePage = () => {
 
   useEffect(() => {
     const fetchUser = async () => {
+      if (!currentUser?._id) return;
       try {
         const res = await axios.get(
           `${import.meta.env.VITE_APP_API_URL}users/${currentUser._id}`,
@@ -29,7 +30,7 @@ const ProfilePage = () => {
       }
     };
     fetchUser();
-  }, [currentUser, token]);
+  }, [currentUser._id, token, setCurrentUser]);
 
   const handleEditModal = () => {
     setModalShow(true);
@@ -37,6 +38,8 @@ const ProfilePage = () => {
   const closeModal = () => {
     setModalShow(false);
   };
+
+  const { avatar, name, gender, age, height, weight } = currentUser || {};
   return (
     <Layout>
       <Container fluid="true">
@@ -45,7 +48,7 @@ const ProfilePage = () => {
           <h4>Current Photo</h4>
 
           <Image
-            src={currentUser?.avatar || user2}
+            src={avatar || user2}
             roundedCircle
             fluid="true"
             style={{ height: "180px", width: "180px", objectFit: "cover" }}
@@ -54,23 +57,23 @@ const ProfilePage = () => {
           <div className="user-info mt-4">
             <div className="col-sm-3 d-flex gap-3">
               <p className="info">Name</p>
-              <p className="fw-semibold">{currentUser?.name || "Anonymous"}</p>
+              <p className="fw-semibold">{name || "Anonymous"}</p>
             </div>
             <div className="col-sm-3 d-flex gap-3">
               <p className="info">Gender</p>
-              <p className="fw-semibold">{currentUser?.gender || "N/A"}</p>
+              <p className="fw-semibold">{gender || "N/A"}</p>
             </div>
             <div className="col-sm-3 d-flex gap-3">
               <p className="info">Age</p>
-              <p className="fw-semibold">{currentUser?.age || "N/A"}</p>
+              <p className="fw-semibold">{age || "N/A"}</p>
             </div>
             <div className="col-sm-3 d-flex gap-3">
               <p className="info">Height</p>
-              <p className="fw-semibold">{currentUser?.height || "N/A"}</p>
+              <p className="fw-semibold">{height || "N/A"}</p>
             </div>
             <div className="col-sm-3 d-flex gap-3">
               <p className="info">Weight</p>
-              <p className="fw-semibold">{currentUser?.weight || "N/A"}</p>
+              <p className="fw-semibold">{weight || "N/A"}</p>
             </div>
           </div>
           <Button

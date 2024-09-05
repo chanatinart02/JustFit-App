@@ -30,7 +30,6 @@ const ActivitiesCards = ({
   const formattedDate = dayjs(dateOfActivity).format("DD/MM/YYYY");
   const formattedDuration = convertToHoursAndMinutes(duration);
 
-  //
   const activity = activitiesType.find(
     (activity) => activity.name === typeOfActivity
   );

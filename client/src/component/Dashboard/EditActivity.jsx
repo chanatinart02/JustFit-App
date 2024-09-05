@@ -1,15 +1,19 @@
 import React, { useEffect, useState } from "react";
 import { Modal, Button, Form, Row, Col } from "react-bootstrap";
-import axios from "axios";
 
 import activitiesType from "../../constants/activitiesType";
 import { useActivities } from "../../contexts/ActivityContext";
 import { useAuth } from "../../contexts/AuthContext";
 import { calculateTime, calculateEnergyBurn } from "../../Utils/activityUtils";
+import {
+  updateActivity,
+  fetchActivitiesApi,
+} from "../../services/activityService";
 
 const EditActivity = ({ editShow, handleEditClose }) => {
-  const { selectedActivity } = useActivities();
-  const { token } = useAuth();
+  const { selectedActivity, setActivities } = useActivities();
+  const { currentUser, token } = useAuth();
+
   const [formData, setFormData] = useState({
     typeOfActivity: "",
     title: "",
@@ -25,6 +29,8 @@ const EditActivity = ({ editShow, handleEditClose }) => {
   useEffect(() => {
     if (selectedActivity) {
       setFormData(selectedActivity);
+      setHour(Math.floor(selectedActivity.duration / 60));
+      setMinute(selectedActivity.duration % 60);
     }
   }, [selectedActivity]);
 
@@ -54,21 +60,17 @@ const EditActivity = ({ editShow, handleEditClose }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      setFormData({
-        ...formData,
-      });
+      await updateActivity(selectedActivity.id, formData, token);
 
-      const res = await axios.patch(
-        `${import.meta.env.VITE_APP_API_URL}activities/${selectedActivity.id}`,
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+      const updatedActivities = await fetchActivitiesApi(
+        currentUser._id,
+        token
       );
 
-      handleEditClose();
+      if (updatedActivities) {
+        setActivities(updatedActivities); // Update the context state
+        handleEditClose();
+      }
     } catch (error) {
       console.error("Error updating activity:", error);
     }
